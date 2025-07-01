@@ -1,9 +1,6 @@
 ---
 title: "Session 1"
 format: live-html
-filters: 
-  - webr
-  - naquiz
 engine: knitr
 fig-cap-location: top
 theme: lux
