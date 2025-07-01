@@ -13,6 +13,7 @@ website:
       - href: index.qmd
       - section: Getting Started
         contents:
+          - getting_started/test.qmd
           - getting_started/installation.qmd
           - getting_started/editor.qmd
           - getting_started/packages.qmd
