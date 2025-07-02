@@ -6,7 +6,13 @@ fig-cap-location: top
 theme: lux
 webr:
   render-df: default
-  packages: ["tibble", "ggplot2", "dplyr", "purrr","tidyverse"]
+  
+  packages: 
+      - tibble
+      - ggplot2
+      - dplyr
+      - tidyverse
+      - purrr
 ---
 
 ## Measures of Central Tendency
