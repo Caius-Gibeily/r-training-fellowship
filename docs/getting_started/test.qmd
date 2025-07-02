@@ -374,7 +374,3 @@ y_values_250 %>%
 <p style="margin:35px;">
 
 </p>
-
-## For you to think about
-
-Earlier we explained that when calculating the sum of squares we square the distances to make sure that all values are positive and hence avoid issues with cancellation effects. But why not use the absolute value of the distance instead, you might ask? Use the interactive windows above and see if the mean can also be found if taking the absolute value instead of squaring. Then answer the following question: :::::{.question} Using the absolute instead of the squared difference in this case calculates what? ::::{.choices} :::{.choice} Mean :::\
