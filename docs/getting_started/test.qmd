@@ -15,6 +15,10 @@ webr:
       - purrr
 ---
 
+```{r}
+install.packages("tidyverse",repos = "https://cloud.r-project.org")
+```
+
 ## Measures of Central Tendency
 
 A measure of central tendency is a single value that attempts to describe a set of data by identifying the central position within that set of data. The mean and median are the most commonly used measures of central tendency for numerical data. \## The Mean The mean, one of the simplest concepts in statistics, is a quantity representing the "center" of a collection of numbers and is intermediate to the extreme values of the set of numbers. The mean can be calculated by taking the sum of the values in a series and dividing by the number of values (see @eq-mean). However, the mean can also be thought of as a quantity that minimizes the distance from all values in set of numbers. Although thinking about the mean in this way may seem unnecessarily indirect (perhaps even silly), we will use this perspective to demonstrate some coding concepts that we need to know to facilitate calculating more complex things down the line. In addition, thinking about the mean as a value that minimizes the distance from all numbers in a series of numbers taps into the concept of *sum of squares*, something we will talk about more in future sessions.
@@ -43,7 +47,6 @@ $$\Large \bar{x}= \frac{1}{n} \sum_{i=1}^{n}(x_i)$$ {#eq-mean}
 #| out-width: "80%"
 #| label: fig-plot
 #| fig-cap: Schematic representing the process of how to search for the mean
-#| install.packages("tidyverse")
 library(tidyverse)
 d <- tibble(guess = rep(c("GUESS 1", "GUESS 2", "GUESS 3"), 
                         each = 3),
