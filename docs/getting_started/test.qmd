@@ -43,6 +43,7 @@ $$\Large \bar{x}= \frac{1}{n} \sum_{i=1}^{n}(x_i)$$ {#eq-mean}
 #| out-width: "80%"
 #| label: fig-plot
 #| fig-cap: Schematic representing the process of how to search for the mean
+#| install.packages("tidyverse")
 library(tidyverse)
 d <- tibble(guess = rep(c("GUESS 1", "GUESS 2", "GUESS 3"), 
                         each = 3),
