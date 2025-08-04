@@ -13,36 +13,38 @@ website:
       - href: index.qmd
       - section: Getting Started
         contents:
-          - getting_started/test.qmd
-          - getting_started/installation.qmd
-          - getting_started/editor.qmd
-          - getting_started/packages.qmd
-          - getting_started/plotting.qmd
-      - section: Exercises and Grading
-        contents:
-          - exercises/exercises.qmd
-          - exercises/grading.qmd
-          - exercises/gradethis.qmd
-          - exercises/environments.qmd
-      - section: Interactive Documents and Tutorials
-        contents:
-          - interactive/reactivity.qmd
-          - interactive/data.qmd
-          - interactive/dynamic.qmd
-          - interactive/hybrid.qmd
-          - interactive/dashboards.qmd
-      - section: Other Features
-        contents:
-          - other/tables.qmd
-          - other/resources.qmd
-          - other/htmlwidgets.qmd
-          - other/py_output.qmd
-          - other/slides.qmd
-      - text: "---"
-      - section: Reference
-        contents:
-          - reference/document-yaml.qmd
-          - reference/cell-options.qmd
+          - tutorial_1.qmd
+          - getting_started/roperations.qmd
+          - getting_started/rdata_types.qmd
+          - getting_started/rdata_structures2.qmd
+          - getting_started/rimporting_data.qmd
+          - getting_started/rindexing.qmd
+
+      # - section: Exercises and Grading
+      #   contents:
+      #     - exercises/exercises.qmd
+      #     - exercises/grading.qmd
+      #     - exercises/gradethis.qmd
+      #     - exercises/environments.qmd
+      # - section: Interactive Documents and Tutorials
+      #   contents:
+      #     - interactive/reactivity.qmd
+      #     - interactive/data.qmd
+      #     - interactive/dynamic.qmd
+      #     - interactive/hybrid.qmd
+      #     - interactive/dashboards.qmd
+      # - section: Other Features
+      #   contents:
+      #     - other/tables.qmd
+      #     - other/resources.qmd
+      #     - other/htmlwidgets.qmd
+      #     - other/py_output.qmd
+      #     - other/slides.qmd
+      # - text: "---"
+      # - section: Reference
+      #   contents:
+      #     - reference/document-yaml.qmd
+      #     - reference/cell-options.qmd
 
 theme:
   light: cosmo

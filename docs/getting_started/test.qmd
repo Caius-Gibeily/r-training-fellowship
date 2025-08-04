@@ -1,19 +1,18 @@
 ---
-title: "Session 1"
+title: Creating Exercises
+subtitle: Evaluate learner code, providing support with hints and solutions
 format: live-html
 engine: knitr
-fig-cap-location: top
-theme: lux
 webr:
-  render-df: default
-  
-  packages: 
-      - tibble
-      - ggplot2
-      - tidyverse
-      - dplyr
-      - purrr
+  packages:
+    - dplyr
+toc: true
 ---
+
+{{< include ../_extensions/live/_knitr.qmd >}}
+{{< include ../_extensions/live/_gradethis.qmd >}}
+
+
 
 ## Measures of Central Tendency
 
@@ -29,9 +28,69 @@ $$\Large \bar{x}= \frac{1}{n} \sum_{i=1}^{n}(x_i)$$ {#eq-mean}
 
 </p>
 
-## Searching for the mean
+### Searching for the mean
 
 @fig-plot shows a schematic of how we might think about searching for the mean by introducing guesses (g~1~, g~2~, g~3~). The best guess will be the one that minimizes the distance from the guessed value and the observed numbers (y~1~, y~2~, y~3~). But how should be summarize the distances across observations?
+
+
+```{webr}
+#| setup: true
+#| exercise: ex_3
+library(dplyr)
+```
+
+```{webr}
+#| exercise: ex_3
+starwars |> ______
+```
+
+::: { .hint exercise="ex_3"}
+::: { .callout-note collapse="false"}
+## Hint 1
+
+Consider using the `filter()` function from `dplyr`.
+
+```r
+starwars |> filter(______)
+```
+:::
+:::
+
+::: { .hint exercise="ex_3"}
+::: { .callout-note collapse="false"}
+## Hint 2
+
+You should filter the dataset using the `species` column.
+
+```r
+starwars |> filter(species == ______)
+```
+:::
+:::
+
+::: { .solution exercise="ex_3" }
+::: { .callout-tip collapse="false"}
+## Fully worked solution:
+
+Use the `filter()` function from `dplyr`:
+
+```r
+starwars |>                                 #<1>
+    filter(species == "Droid")              #<2>
+```
+
+1. Take the `starwars` dataset, and then,
+2. Filter for the "Droid" species.
+
+:::
+:::
+
+
+```{webr}
+#| exercise: ex_3
+#| check: true
+gradethis::grade_this_code()
+```
 
 ```{r}
 #| echo: FALSE 
@@ -191,7 +250,7 @@ $$\Large SSQ_{g_1}= \sum_{i=1}^{n}(y_i - g_1)^2$$ {#eq-ssqg}
 
 If we translate @eq-ssqg to plain English, it tells us that in order to calculate SSQ~g1~, we should calculate the difference between our guess (g~1~) and our y-values (y~1~ - g~1~, y~2~ - g~1~, y~3~ - g~1~), then square the differences and finally sum up the squared differences. Why do square the differences before summing, you might ask? In the context of statistical analysis, the squaring operation in the *sum of squares* is used because: \* By squaring, all deviations are treated as positive values, preventing cancellation effects when calculating the total dispersion or variation. For the purpose of what we are doing today, this is the most important reason why we square the differences. \* Squaring also has the effect of giving more weight to larger deviations. This means that data points further away from the mean (or guess in our case) will have a greater impact on the overall sum of squares, which can be desirable in many statistical applications. \* From a mathematical perspective, squaring is often preferred because it leads to simpler calculations, especially when dealing with derivatives in optimization problems. We may or may not talk more about this in the future.
 
-```{webr-r}
+```{webr}
 #| context: output
 mean_guess_sm <- tibble(y = rep(c(3.5, 2.8, 1.4), 3),
                         guess = rep(c("g1", "g2", "g3"), each = 3),
@@ -206,7 +265,7 @@ Through out this training, we will use our R skills to help us unpack the mathem
 
 </p>
 
-```{webr-r}
+```{webr}
 mean_guess_sm
 ```
 
@@ -220,7 +279,7 @@ Great, we have some data and it seems to correspond well with @fig-plot. Now we 
 
 </p>
 
-```{webr-r}
+```{webr}
 mean_guess_sm %>% 
   mutate(diff = y - guess_value)
 ```
@@ -235,148 +294,3 @@ We see that calculating the difference results in both positive and negative val
 
 </p>
 
-```{webr-r}
-mean_guess_sm %>% 
-  mutate(diff = y - guess_value, 
-         diff_sq = diff^2)
-```
-
-<p style="margin:35px;">
-
-</p>
-
-As expected, all squared differences are positive. If we revisit @eq-ssqg, we see that the only thing left for us to do is sum up (that is what $\sum$ means) the squared differences. But wait a minute, @eq-ssqg shows that the process of calculating the sum of squares is done for each guess separately (hence the naming SSQ~g1~). So far this has not been an issue because the guess values and y-values were repeated in the data in a way so that it would be easy to calculate the squared differences. But when summing up the squared differences, we need to make sure that we only sum the three values beloning to each guess group. We will use the `group_by()` function to accomplish this. After grouping we will use the `summarize()` function to calculate the sum.
-
-<p style="margin:30px;">
-
-</p>
-
-```{webr-r}
-#| warning: false
-mean_guess_sm %>% 
-  mutate(diff = y - guess_value, 
-         diff_sq = diff^2) %>% 
-  group_by(guess, guess_value) %>% 
-  summarize(ssq = sum(diff_sq))
-```
-
-<p style="margin:35px;">
-
-</p>
-
-We see that g~1~ = 2.6 is the best guess (smallest `ssq` value) out of our three guesses. We of course have no reason to believe that this is a particularly good guess, and in order to get closer to the true mean we would have to try a sequence of many guesses for which values differ by small increments. Let's try this with a bigger data set (more y-values).\
-\## More data, More guesses! In the object `y_values_250` I have stored 250 observations sampled from a normal distribution. A histogram of these values is shown below.
-
-```{webr-r}
-#| context: output
-set.seed(14)
-y_values_250 <- tibble(values = rnorm(250, mean = 2.5))
-```
-
-```{r}
-#| echo: false
-#| message: FALSE
-#| warning: FALSE
-#| fig-align: "center"
-#| fig-width: 4.5
-#| fig-height: 2.5
-#| out-width: "80%"
-#| label: fig-hist
-#| fig-cap: Histogram of 250 observation sampled from a normal distribution
-set.seed(14)
-y_values_250 <- tibble(values = rnorm(250, mean = 2.5))
-y_values_250 %>% 
-  ggplot(aes(x = values)) +
-  geom_histogram(bins = 15,
-                 fill = "grey75", 
-                 color = "black") +
-  labs(x = NULL) +
-  theme_minimal() +
-  theme(panel.grid.minor = element_blank())
-```
-
-We are now going to repeat the process described above; searching for the mean by trying many guesses and see which one results in the smallest sum of squares. First, let's take a look at the data so that we can start to get an idea of what we need to do next.
-
-<p style="margin:30px;">
-
-</p>
-
-```{webr-r}
-y_values_250
-```
-
-<p style="margin:35px;">
-
-</p>
-
-What we have is a tibble with one column named `values` storing the 250 observations shown in @fig-hist. Next, we will use the same idea as described above to search for the mean. Taking a look at @fig-hist and acknowledging the fact that the mean is positioned in the center of a normal distribution, it seems reasonable that the mean will be somewhere between 2.4 and 2.6. Therefore, we will go through 1,000 guesses this time, evenly spaces between these two values. Note that there are two tabs with output; one interactive code chunk, but since these code chunks cannot at this point output interactive plots, a plotly plot can be found in the second tab. We will use the inteactive plotly plot to hover over the curve in order to find the guess that corresponds to the smallest ssq value.
-
-<p style="margin:30px;">
-
-</p>
-
-::: panel-tabset
-## Interactive code
-
-```{webr-r}
-#| fig-height: 4
-add_guess <- function(guess){
-  y_values_250 %>% 
-    mutate(guess = guess)
-}
-res <- map(seq(2.4, 2.6, length.out = 1000), \(i) add_guess(i))
-res_df <- res %>% 
-  map(. %>% 
-        mutate(diff_sq = (values - guess)^2) %>% 
-        summarise(ssq = sum(diff_sq), 
-                  guess = first(guess))) %>% 
-  list_rbind()
-res_df %>% 
-  ggplot(aes(x = guess, 
-             y = ssq)) +
-  geom_point() +
-  theme_minimal()
-```
-
-## Plotly
-
-```{r}
-#| fig-height: 4
-add_guess <- function(guess){
-  y_values_250 %>% 
-    mutate(guess = guess)
-}
-res <- map(seq(2.4, 2.6, length.out = 1000), \(i) add_guess(i))
-res_df <- res %>% 
-  map(. %>% 
-        mutate(diff_sq = (values - guess)^2) %>% 
-        summarise(ssq = sum(diff_sq), 
-                  guess = first(guess))) %>% 
-  list_rbind()
-p1 <- res_df %>% 
-  ggplot(aes(x = guess, 
-             y = ssq)) +
-  geom_point() +
-  theme_minimal()
-plotly::ggplotly(p1)
-```
-:::
-
-<p style="margin:35px;">
-
-</p>
-
-And now for grand reveal! Lets check if the value found in the plotly output corresponds to the actual mean.
-
-<p style="margin:30px;">
-
-</p>
-
-```{webr-r}
-y_values_250 %>% 
-  summarise(mean(values))
-```
-
-<p style="margin:35px;">
-
-</p>
