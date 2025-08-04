@@ -46,7 +46,7 @@ While out of scope in this training, you can find more information on using regu
 
 ![](images/booles.jpeg){width="360"}
 
-At the University of York, George Boole devised the foundational axioms of symbolic logic and what would eponymously be called Boolean logic. His work established logic gates that would prove pivotal to Alan Turing's work and the development of computers. In R, logicals take two values: `TRUE` and `FALSE`, also represented as `1` or `0`. You can define them as follows:
+At Queen's College, Cork, Ireland, George Boole devised the fundamental axioms of symbolic logic and what would eponymously be called Boolean logic. His work established logic gates that would prove pivotal to Alan Turing's work and the development of computers. In R, logicals take two values: `TRUE` and `FALSE`, also represented as `1` or `0`. You can define them as follows:
 
 ```{webr}
 a_cat_is_a_reptile <- FALSE # or F
