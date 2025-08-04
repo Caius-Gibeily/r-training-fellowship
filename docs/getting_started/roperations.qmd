@@ -20,11 +20,6 @@ Anything that can be done using a calculator can also be done in R. Why, you mig
 Let's use the different arithmetic operations in the code block below; inspect the output for each operation
 
 ```{webr}
-#| exercise: ex_1
-1 + 2 + 3 + ______
-```
-
-```{webr}
 #| exercise: ex_2
 4 + 2
 ```

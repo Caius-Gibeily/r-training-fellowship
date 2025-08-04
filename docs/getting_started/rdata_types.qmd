@@ -11,7 +11,7 @@ output:
 toc: true
 ---
 
-While the pre-Socratics divided substances into fourfire, water, air and earth. In R, we could consider data types as falling into four main flavours: numbers, strings, logicals and factors.
+While the pre-Socratics divided substances into four elements - fire, water, air and earth - in R, we could consider data types as falling into four main flavours: numbers, strings, logicals and factors.
 
 ## Numbers
 
@@ -44,7 +44,7 @@ While out of scope in this training, you can find more information on using regu
 
 ## Logicals
 
-![](images/boole)
+![](images/booles.jpeg){width="360"}
 
 At the University of York, George Boole devised the foundational axioms of symbolic logic and what would eponymously be called Boolean logic. His work established logic gates that would prove pivotal to Alan Turing's work and the development of computers. In R, logicals take two values: `TRUE` and `FALSE`, also represented as `1` or `0`. You can define them as follows:
 
