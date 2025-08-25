@@ -1,5 +1,5 @@
 ---
-title: "Data import and tidying"
+title: "Session 2: Data import and tidying"
 format: html
 editor: visual
 ---
@@ -8,7 +8,7 @@ editor: visual
 
 This week, we'll be reading
 
-<a href="https://https://r4ds.hadley.nz/data-tidy.html" target="_blank" class="btn"> Chapters 5-8 </a>
+<a href="https://r4ds.hadley.nz/data-tidy.html" target="_blank" class="btn"> Chapters 5-8 </a>
 
 Please complete exercises
 

@@ -1,5 +1,5 @@
 ---
-title: "Visualization layers and exploratory analysis"
+title: "Session 3: Visualization layers and exploratory analysis"
 format: html
 editor: visual
 ---
@@ -8,14 +8,13 @@ editor: visual
 
 This week, we'll be reading
 
-<a href="https://https://r4ds.hadley.nz/layers.html" target="_blank" class="btn"> Chapters 9 and 10 </a>
+<a href="https://r4ds.hadley.nz/layers.html" target="_blank" class="btn"> Chapters 9 and 10 </a>
 
 Please complete exercises
 
 1.  r4ds.tutorials: 09-layers
 
 2.  r4ds.tutorials: 10-exploratory-data-analysis
-
 
 ```{=html}
 <style>

@@ -1,5 +1,5 @@
 ---
-title: "Visualization and Transformation"
+title: "Session 1: Visualization and Transformation"
 format: html
 editor: visual
 ---

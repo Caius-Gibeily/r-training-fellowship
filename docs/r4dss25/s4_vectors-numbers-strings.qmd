@@ -1,5 +1,5 @@
 ---
-title: "Vectors, numbers and strings"
+title: "Session 4: Vectors, numbers and strings"
 format: html
 editor: visual
 ---
@@ -8,7 +8,7 @@ editor: visual
 
 This week, we'll be reading
 
-<a href="https://https://r4ds.hadley.nz/logicals.html" target="_blank" class="btn"> Chapters 12-14 </a>
+<a href="https://r4ds.hadley.nz/logicals.html" target="_blank" class="btn"> Chapters 12-14 </a>
 
 Please complete exercises
 
