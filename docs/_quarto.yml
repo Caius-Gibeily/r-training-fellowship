@@ -4,7 +4,7 @@ project:
 website:
   title: "Quarto Live Documentation"
   description: "Interactive code blocks and exercises, powered by WebAssembly."
-  repo-url: https://github.com/Caius-Gibeily/test-quarto
+  repo-url: https://github.com/Caius-Gibeily/r-training-fellowship
   repo-actions: [edit, issue]
   repo-subdir: "docs"
   page-navigation: true
@@ -20,7 +20,6 @@ website:
           - r4dss25/s3_layers_exploratory.qmd
           - r4dss25/s4_vectors-numbers-strings.qmd
           - r4dss25/s5_factors-nas.qmd
-          - r4dss25/s6
       - section: Supplementary exercises for R4DS
         contents: 
           - getting_started/rimporting_data.qmd
