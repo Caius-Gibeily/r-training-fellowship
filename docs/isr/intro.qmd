@@ -1,0 +1,25 @@
+---
+title: "Introduction to the course"
+format: html
+editor: visual
+---
+
+## Welcome to Introduction to Statistics in R course
+
+Advancing from the earlier R four Data Science, we now tackle basic concepts in statistics and how to implement them in R. In contrast, perhaps, to how R/stats might have been previously taught to you, we hope to build an intuitive understanding of how concepts in stats work by encouraging *you* to design functions and run simulations.
+
+## How the course is structured
+
+Like R4DS, we will be leveraging pre-existing resources that provide well-illustrated explanations supplemented by live discussion and Q&A.
+
+The course includes both synchronous and asynchronous elements:
+
+Asynchronously, we will have
+
+-   Optional chapter readings from *Modern Statistics with R* and *Learning Statistics for R*
+
+-   Illustrated YouTube videos from *StatsQuest*
+
+-   Exercises we supply
+
+During our virtual synchronous classes, there will be the opportunity to raise any questions from the asynchronous materials

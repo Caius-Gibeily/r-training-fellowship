@@ -11,7 +11,7 @@ toc: true
 
 {{< include ../_extensions/live/_knitr.qmd >}}
 
-The `quarto-live` extension allows you to define a collection of linked code cells and blocks to form an exercise. An exercise is fundamentally an interactive code block, but with the addition of optional setup code, hints, solutions, and grading. 
+The `quarto-live` extension allows you to define a collection of linked code cells and blocks to form an exercise. An exercise is fundamentally an interactive code block, but with the addition of optional setup code, hints, solutions, and grading.
 
 ## Create an Exercise
 
@@ -19,7 +19,7 @@ To designate a `webr` block as an exercise set the `exercise` cell option, givin
 
 #### Source
 
-````{.markdown filename="exercise.qmd"}
+```` {.markdown filename="exercise.qmd"}
 Fill in the blank so that the result of the sum is 10.
 
 ```{{webr}}
@@ -39,7 +39,7 @@ Fill in the blank so that the result of the sum is 10.
 
 Exercises may optionally include a series of six or more underscores, designated as "blanks". The learner will be prompted to replace the blanks with code when evaluating an exercise.
 
-::: {.callout-note}
+::: callout-note
 Unlike standard interactive code blocks, exercises do not auto-evaluate by default -- the "Run Code" button must be activated by the learner to evaluate the code.
 :::
 
@@ -53,7 +53,7 @@ Designate a `webr` block as an exercise setup block by setting the `setup: true`
 
 Fill in the blank so that the result of the sum is 10.
 
-````{.markdown filename="exercise.qmd"}
+```` {.markdown filename="exercise.qmd"}
 ```{{webr}}
 #| setup: true
 #| exercise: ex_2
@@ -91,7 +91,7 @@ A setup block may be attached to multiple exercises by providing a list of exerc
 
 #### Source
 
-````{.markdown filename="exercise.qmd"}
+```` {.markdown filename="exercise.qmd"}
 ```{{webr}}
 #| setup: true
 #| exercise:
@@ -139,7 +139,7 @@ Linked exercises will display UI button elements to reveal hints and solutions. 
 
 #### Source
 
-````{.markdown filename="exercise.qmd"}
+```` {.markdown filename="exercise.qmd"}
 Filter the `starwars` dataset so that only the droid characters are included.
 
 ```{{webr}}
@@ -209,55 +209,55 @@ library(dplyr)
 starwars |> ______
 ```
 
-::: { .hint exercise="ex_3"}
-::: { .callout-note collapse="false"}
+:::: {.hint exercise="ex_3"}
+::: {.callout-note collapse="false"}
 ## Hint 1
 
 Consider using the `filter()` function from `dplyr`.
 
-```r
+``` r
 starwars |> filter(______)
 ```
 :::
-:::
+::::
 
-::: { .hint exercise="ex_3"}
-::: { .callout-note collapse="false"}
+:::: {.hint exercise="ex_3"}
+::: {.callout-note collapse="false"}
 ## Hint 2
 
 You should filter the dataset using the `species` column.
 
-```r
+``` r
 starwars |> filter(species == ______)
 ```
 :::
-:::
+::::
 
-::: { .solution exercise="ex_3" }
-::: { .callout-tip collapse="false"}
+:::: {.solution exercise="ex_3"}
+::: {.callout-tip collapse="false"}
 ## Fully worked solution:
 
 Use the `filter()` function from `dplyr`:
 
-```r
+``` r
 starwars |>                                 #<1>
     filter(species == "Droid")              #<2>
 ```
-1. Take the `starwars` dataset, and then,
-2. Filter for the "Droid" species.
 
+1.  Take the `starwars` dataset, and then,
+2.  Filter for the "Droid" species.
 :::
-:::
-
+::::
 
 ## Tabset exercises
 
 You may prefer to show exercise hints and solutions in the form of a tabbed panel. This can be achieved by wrapping your fenced `.hint` and `.solution` blocks as part of a tabset panel block.
 
 <details>
+
 <summary>Source</summary>
 
-````{.markdown filename="exercise.qmd"}
+```` {.markdown filename="exercise.qmd"}
 :::: {.panel-tabset}
 
 ## Exercise
@@ -298,12 +298,12 @@ starwars |>                                 #<1>
 
 ::::
 ````
+
 </details>
 
 #### Output
 
-:::: {.panel-tabset}
-
+::::: panel-tabset
 ## Exercise
 
 ```{webr}
@@ -319,34 +319,34 @@ starwars |> ______
 
 ## Hints
 
-::: { .hint exercise="ex_4"}
+::: {.hint exercise="ex_4"}
 Consider using the `filter()` function from `dplyr`.
 
-```r
+``` r
 starwars |> filter(______)
 ```
 :::
 
 ## Solution
 
-::: { .solution exercise="ex_4" }
+::: {.solution exercise="ex_4"}
 Use the `filter()` function from `dplyr`:
 
-```r
+``` r
 starwars |>                                 #<1>
     filter(species == "Droid")              #<2>
 ```
-1. Take the `starwars` dataset, and then,
-2. Filter for the "Droid" species.
-:::
 
-::::
+1.  Take the `starwars` dataset, and then,
+2.  Filter for the "Droid" species.
+:::
+:::::
 
 ## Document level options
 
 Enable and disable hints and solutions for an entire document using the `live` key in the document YAML header.
 
-```yaml
+``` yaml
 ---
 live:
   show-hints: true

@@ -32,11 +32,11 @@ Preformatting your data in a spreadsheet editor like Excel or LibreOffice Calc i
 
 Take a look at this small dataset of six languages, the number of fluent speakers and a binary variable indicating whether the language is natural or constructed.
 
-![![](images/clipboard-2422611511.png)]()
+![](images/before-01.png)
 
 A better format would be
 
-![](images/clipboard-3742522558.png)
+![](images/after.png)
 
 We now notice that all the headers are written lowercase now with a removal of the space in the second header title. We have also recoded the natural columns to 1s and 0s since this column represents a Boolean (yes/no) variable. When the dataset is loaded, we can then ensure R reads it as a Boolean (or logical) variable by using `data$natural <- as.logical(data$natural)`.
 
