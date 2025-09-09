@@ -1,6 +1,5 @@
 ---
-title: "Session 3: Covariance"
-author: "Caius and Hasse"
+title: "Session 4: Covariance"
 format: live-html
 engine: knitr
 webr:

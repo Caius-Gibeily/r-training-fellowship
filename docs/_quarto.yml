@@ -28,6 +28,7 @@ website:
       - section: Introduction to Statistics in R
         contents:
           - isr/intro.qmd
+          - isr/variance.qmd
           - isr/covariance.qmd
           
       # - section: Exercises and Grading
