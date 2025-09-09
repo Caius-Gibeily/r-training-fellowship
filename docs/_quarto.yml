@@ -11,23 +11,24 @@ website:
     contents:
 
       - href: index.qmd
-      - section: R for Data Science 2025
-        contents:
-          - r4dss25/intro.qmd
-          - r4dss25/s1_data-visualization_transform.qmd
-          - r4dss25/s2_data-tidying_import.qmd
-          - r4dss25/s3_layers_exploratory.qmd
-          - r4dss25/s4_vectors-numbers-strings.qmd
-          - r4dss25/s5_factors-nas.qmd
-      - section: Supplementary exercises for R4DS
-        contents: 
-          - getting_started/rimporting_data.qmd
-          - getting_started/rdata_types.qmd
-          - getting_started/rdata_structures2.qmd
-          - getting_started/rindexing.qmd
+      #- section: R for Data Science 2025
+      #  contents:
+      #    - r4dss25/intro.qmd
+      #    - r4dss25/s1_data-visualization_transform.qmd
+      #    - r4dss25/s2_data-tidying_import.qmd
+      #    - r4dss25/s3_layers_exploratory.qmd
+      #    - r4dss25/s4_vectors-numbers-strings.qmd
+      #    - r4dss25/s5_factors-nas.qmd
+      #- section: Supplementary exercises for R4DS
+      #  contents: 
+      #    - getting_started/rimporting_data.qmd
+      #    - getting_started/rdata_types.qmd
+      #    - getting_started/rdata_structures2.qmd
+      #    - getting_started/rindexing.qmd
       - section: Introduction to Statistics in R
         contents:
           - isr/intro.qmd
+          - isr/covariance.qmd
           
       # - section: Exercises and Grading
       #   contents:

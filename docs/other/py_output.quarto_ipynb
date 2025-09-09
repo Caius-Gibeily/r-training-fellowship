@@ -96,7 +96,7 @@
         "At the moment Jupyter widgets cannot be used as reactive inputs for `quarto-live`'s [OJS integration](../interactive/reactivity.qmd). This is planned to be added in a future release of `quarto-live`.\n",
         ":::\n"
       ],
-      "id": "1090a6e6"
+      "id": "43d028c2"
     }
   ],
   "metadata": {
