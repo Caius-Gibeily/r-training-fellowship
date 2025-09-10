@@ -29,7 +29,7 @@ website:
         contents:
           - isr/intro.qmd
           - isr/variance.qmd
-          - isr/covariance.qmd
+          #- isr/covariance.qmd
           
       # - section: Exercises and Grading
       #   contents:
@@ -55,7 +55,7 @@ website:
       # - section: Reference
       #   contents:
       #     - reference/document-yaml.qmd
-      #     - reference/cell-options.qmd
+      #     - reference/c
 
 theme:
   light: cosmo

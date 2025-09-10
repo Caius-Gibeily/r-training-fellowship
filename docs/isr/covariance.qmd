@@ -13,6 +13,7 @@ toc: true
 ---
 
 {{< include ../_extensions/live/_knitr.qmd >}}
+
 ```{webr, include=FALSE}
 
 library(MASS)     
@@ -21,9 +22,12 @@ library(patchwork)
 library(dplyr)
 library(TeX)
 ```
+
+This week we'll continue the statistics adventure by discussing covariance and Pearson's correlation. We'll start with [video 1](https://www.youtube.com/watch?v=qtaqvPAeEJY) on *Covariance* and then [video 2](https://www.youtube.com/watch?v=xZ_z8KWkhXE) on *Pearson's correlation*. Copy and paste each ff
+
 ### Variance continued
 
-We saw last week how the variance and its square root derivative, the standard deviation $\sigma$, represented the spread of data drawn from a normal distribution around its mean. Since population samples inevitably underestimate the true population variance, we explored the importance of dividing the square of differences of each value $x$ from the sample mean $\bar{x}$ ($\sum_{i=1}^n (x_i - \bar{x})^2$) by $n-1$ , rather than $n$.
+We saw last week how the variance and its square root derivative, the standard deviation $\sigma$, represented the amount of deviation of data around a mean. Since population samples inevitably underestimate the true population variance, we explored the importance of dividing the square of differences of each value $x$ from the sample mean $\bar{x}$ ($\sum_{i=1}^n (x_i - \bar{x})^2$) by $n-1$ , rather than $n$.
 
 Finally, you learned that variance is inherently scalable. The sample of a random variable can be transformed by centering the sample against the mean and dividing by the standard deviation. You would have already encountered this as z-transformation or z-scoring. This approach elegantly transforms datapoints into distances from the mean in units of $\sigma$. We will see later how bivariate correlation is essentially the covariance between each variable after being z-scored.
 
@@ -31,7 +35,7 @@ Finally, you learned that variance is inherently scalable. The sample of a rando
 
 Another way to consider variance is as an adjusted ($n-1$) mean of squared differences. This intuition will be helpful as we come to discuss covariance. Create a vector of 50 samples drawn from a normal distribution with a mean of 0 and standard deviation of 1. Is this sample already z-normalized?
 
-```{webr}
+```{r}
 sample1 <- tibble(values = rnorm(n,mean,sd))
 
 ```
@@ -48,7 +52,7 @@ calc_diff <- function(data) {
 
 ```
 
-Excellent! Now pass the sample through your function. Before we plot the output, what do you expect to see?
+-   Excellent! Now pass the sample through your function. Before we plot the output, what do you expect to see?
 
 ```{webr}
 sample_diff <- calc_diff(sample1)
@@ -64,7 +68,7 @@ plot_sorted <- function(data,var1,var2) {
 sample_diff |> plot_sorted(values,diff) 
 ```
 
-Now insert a line into the `ggplot` code that plots a vertical line approximately at the x-intercept (i.e. when y = 0). What value does this index correspond to (Hint: use indexing)? Now create a new column in the tibble that takes the square of the differences.
+-   Now insert a line into the `ggplot` code that plots a vertical line approximately at the x-intercept (i.e. when y = 0). What value does this index correspond to (Hint: use indexing)? Now create a new column in the tibble that takes the square of the differences.
 
 ```{webr}
 sample_diff |> mutate(
@@ -73,7 +77,7 @@ sample_diff |> mutate(
 
 ```
 
-Plot these transformed data as you did the non-squared differences.
+-   Plot these transformed data as you did the non-squared differences.
 
 ```{webr}
 vars <- sample_diff |> summarize(sumsquares_n = sum(squared)/n(), sumsquares_n1 = sum(squared)/(n()-1))
@@ -107,8 +111,6 @@ A rather uninteresting plot where $x_1$ is regressed against itself. All points 
 
 Instead of equal sides, each quadrilateral now has sides equal to each point's difference from the means of each variable. Of course, the order of width and length is unimportant. When both differences are positive or negative, the resulting area is positive (green rectangles). Failing which, it is negative. Conversely, all squares of variance were necessarily positive! Like before, when we sum these areas together, we'll then divide by $n-1$. If the total positive area were equal and opposite to the negative area, the variables would have 0 covariance, namely, no relationship. Alternatively, a net negative area would imply an inverse relationship. Let's visualize this concept more clearly by creating two normally distributed random variables. Start by using a $\rho$ of 1
 
-
-
 ```{webr}
 
 multivar <- function(n,rho,mu1,mu2) {
@@ -134,7 +136,7 @@ multivar <- function(n,rho,mu1,mu2) {
 }
 
 rho <- 1
-dat <- multivar(50,rho,0,0)
+dat <- multivar(10,0.6,0,0)
 ```
 
 What does `multivar` do? What do $mu_1$ and $mu_2$ correspond to? What about rho? Using the function, create a dataset with two random variables with a mu of 0. The standard deviation is normalized to 1. Let's now plot the areas for this bivariate distribution.
@@ -182,7 +184,7 @@ av_area
 
 Just like before, this can be visualized by seeing how each area contributes to the overall covariance. The more symmetrical the areal contributions there are (i.e. positive and negative values, the smaller the covariance).
 
-```{webr}
+```{r}
 #
 dat_sorted <- dat %>%
   arrange(contrib) %>%
@@ -244,9 +246,7 @@ univar_rescale <- function(n,scale,mu,sd) {
 
 Plot the result
 
-```{webr}
-#| exercise: e6
-
+```{r}
 sample <- univar_rescale(n=100,scale=4,mu=0,sd=1)
 ggplot()
 ```
@@ -323,7 +323,7 @@ The geometric approach of rectangles showcases not just how positive and negativ
 
 Let's simulate some data for $x_1$ and $x_2$ and change the scale of $x_2$. You'll see the covariance increase with scale but never exceed the bound. The correlation approaches the true value of 0.6. Try changing this value for yourself
 
-```{webr}
+```{r}
 #| exercise: e7
 cov_bound <- function(n, scale,...) {
   set.seed(6342)
@@ -340,7 +340,21 @@ cov_bound <- function(n, scale,...) {
 }
 
 # Try a few scales
-results <- purrr::map_dfr(c(0.5, 1, 2, 4), ~cov_bound(1000, .x, rho=0.6,mu1=0,mu2=0))
+results <- purrr::map_dfr(c(0.5, 1, 2, 4), ~cov_bound(1000, .x, rho=0.8,mu1=0,mu2=0))
 results
 
 ```
+
+showing transformation empirically
+
+explicitly specify which values to change
+
+output pointers
+
+-   vecs with specific cov
+
+-   calc cov with pre-scaling and check corr
+
+-   n tibbles of xy - separately sampled diff parameters - chance corrs, hist generation
+
+-   random scatter, 'guess the correlation'
