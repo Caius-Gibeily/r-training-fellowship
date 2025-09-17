@@ -340,7 +340,7 @@ cov_bound <- function(n, scale,...) {
 }
 
 # Try a few scales
-results <- purrr::map_dfr(c(0.5, 1, 2, 4), ~cov_bound(1000, .x, rho=0.8,mu1=0,mu2=0))
+results <- purrr::map(c(0.5, 1, 2, 4), \(x) cov_bound(1000, x, rho=0.8,mu1=0,mu2=0))
 results
 
 ```
@@ -358,3 +358,17 @@ output pointers
 -   n tibbles of xy - separately sampled diff parameters - chance corrs, hist generation
 
 -   random scatter, 'guess the correlation'
+
+
+dat %>%
+  summarize(across(everything(), 
+                .fns = list(mean = mean, var = var),
+                .names = "{.col}_{.fn}"))
+                
+                ```{r}
+# plot against each other - what is noticed? calculate covariance. Covariance close to 0 in each instance?
+ggplot(dat,aes(x=var_1,y=var_2)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+  
+```

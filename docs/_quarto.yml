@@ -29,6 +29,7 @@ website:
         contents:
           - isr/intro.qmd
           - isr/variance.qmd
+          - isr/cov.qmd
           
       # - section: Exercises and Grading
       #   contents:
