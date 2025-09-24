@@ -30,6 +30,7 @@ website:
           - isr/intro.qmd
           - isr/variance.qmd
           - isr/cov.qmd
+          - isr/se.qmd
           
       # - section: Exercises and Grading
       #   contents:
