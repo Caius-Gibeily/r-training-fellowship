@@ -1,5 +1,5 @@
 ---
-title: "Standard error, Bootstrapping and confidence intervals"
+title: "Session 5: Standard error, Bootstrapping and confidence intervals"
 format: html
 ---
 
