@@ -40,6 +40,8 @@ d_vals %>%
 
 -   Given the formula you've implemented as a function, how would you work backwards to calculate the mean difference for a given Cohen's d and pooled standard deviation? What mean difference would you expect for a Cohen's d of 0.5 and pooled sd of 3?
 
+## Power and power analysis 
+
 3 - Let's now turn back to Josh and watch this [video](https://www.youtube.com/watch?v=Rsc5znwR5FA) (**Statistical Power, Clearly Explained!!!)** and then this [video](https://www.youtube.com/watch?v=VX_M3tIyiYk) (**Power Analysis, Clearly Explained!!!**). Check out this visualization too of [power analysis](https://rpsychologist.com/d3/nhst/)
 
 -   How would you explain statistical power to a fellow researcher? What do the different colored regions correspond to in the RPsychologist visualization?
@@ -89,9 +91,9 @@ theoretical_power <- pwr.t.test(n = n, d = d, sig.level = alpha,
 ## Winner's curse and the danger of low-powered designs
 
 -   If it's cheaper and faster, why shouldn't we always just opt for a quick and easy `n = 12` for every animal experiment or n=40 in psychological research? As we will see, underpowered studies don't just risk increasing the chance that we miss a true effect entirely (namely, falsely failing to reject the null hypothesis when the alternative was in fact true). It also risks something else...
--   To understand this, let's put statistics aside for a moment. Imagine you're at a Sotherby's auction and Article 66 on the list has caught your eye. You, as well as everyone else at the auction, is an expert auctioneer. You can't be sure of its exact market value but you've formed a valid estimate of its value. Besides, you've now set your eye (and wallet) on it. After you've estimated what you think the true value is, you place your bid, consistent with that best guess. But so have 19 other expert auctioneers. You manage outbid the others, congratulations! Going once, twice and the gavel declares you the winner of Article 66. The hapless losers file out of the auction house, while you proudly march to the platform to collect your expensive prize. However, upon further research, you discover the amount you paid grossly exceeded the intrinsic value of the item. You realize then that you have fallen into the dreaded *winner's curse*.
+-   To understand this, let's put statistics aside for a moment. Imagine you're at a Sotherby's auction and Article 66 on the list has caught your eye. You, as well as everyone else at the auction, is an expert auctioneer. You can't be sure of its exact market value but you've formed a valid estimate of its value. Besides, you've now set your eye (and wallet) on it. After you've estimated what you think the true value is, you place your bid, consistent with that best guess. But so have 19 other expert auctioneers. You manage to outbid the others, congratulations! Going once, twice and the gavel declares you the winner of Article 66. The hapless losers file out of the auction house, while you proudly march to the platform to collect your expensive prize. However, upon further research, you discover the amount you paid grossly exceeded the intrinsic value of the item. You realize then that you have fallen into the dreaded *winner's curse*.
 
-6 - Let's start by adapting the code block that outputted `pvals` for $10^4$ simulations to also returned the observed Cohen's d. This will give us a distribution of Cohen's d and the p-value after running a t-test.
+6 - Let's start by adapting the code block that outputted `pvals` for $10^4$ simulations to also return the observed Cohen's d. This will give us a distribution of Cohen's d and the p-value after running a t-test.
 
 ```{r}
 #| eval: false
