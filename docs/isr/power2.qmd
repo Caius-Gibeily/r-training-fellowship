@@ -1,14 +1,8 @@
 ---
 title: "Session 7: Cohen's d, statistical power & power analysis"
-format: live-html
-engine: knitr
-webr:
-  packages:
-    - tidyverse
-    - pwr
+format: html
 ---
 
-{{< include ../_extensions/live/_knitr.qmd >}}
 
 ## Cohen's d
 
