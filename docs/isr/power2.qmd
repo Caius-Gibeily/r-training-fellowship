@@ -38,9 +38,7 @@ d_vals %>%
 
 ```
 
--   Given the formula you've implemented as a function, let's say you were now interested in working backwards to calculate the mean difference for a given Cohen's d.
-
--   Let's confirm this works: for a Cohen's d of 0.5 and a pooled standard deviation of 3, determine the mean difference you would theoretically expect.
+-   Given the formula you've implemented as a function, how would you work backwards to calculate the mean difference for a given Cohen's d and pooled standard deviation? What mean difference would you expect for a Cohen's d of 0.5 and pooled sd of 3?
 
 3 - Let's now turn back to Josh and watch this [video](https://www.youtube.com/watch?v=Rsc5znwR5FA) (**Statistical Power, Clearly Explained!!!)** and then this [video](https://www.youtube.com/watch?v=VX_M3tIyiYk) (**Power Analysis, Clearly Explained!!!**). Check out this visualization too of [power analysis](https://rpsychologist.com/d3/nhst/)
 
@@ -60,7 +58,7 @@ pvals <- map(1:10000, \(i) {
 
 ```
 
--   Let's now use the code to calculate the power to detect whether there is a significant difference in the means between two normally distributed variables, `x` and `y`. Each sample will have `n=20` observations and the population sd for both variables we'll set at `4`. The true mean of `x` is 10. Using what you found above, find the mean of `y` if the true Cohen's d between `x` and `y` is 0.3 (hint: calculate the mean difference first).
+-   Let's now use the code to calculate the power we have to detect whether there is a significant difference in the means between two normally distributed variables, `x` and `y`. Each sample will have `n=20` observations and we'll set the sd for both variables at `4`. The true mean of `x` is 10. Using what you found above, find the mean of `y` if the true Cohen's d between `x` and `y` is 0.3 (hint: calculate the mean difference first).
 
 -   Input the means, sds and n into the code block above and let it run! For the standard alpha = 0.05, what proportion of samples returned a significant value? Let's just confirm, what have you just calculated? Make sure to keep a note of these proportions.
 
