@@ -124,16 +124,12 @@ pvals_d <- map(1:10000, \(i) {
 ```{r}
 #| eval: FALSE
 simulate_pvals <- function(n, mu1, mu2, sd) {
-  map(1:500, \(i) {
+  map(1:500, \(i) { 
     x <- rnorm(n, mean = mu1, sd = sd)
     y <- rnorm(n, mean = mu2, sd = sd)
-    test <- t.test(x, y, var.equal = TRUE)
-    d <- cohens_d(n, n, mean(x), mean(y), sd(x), sd(y))
-    tibble(
-      p = test$p.value,
-      d = d
-    )
-  }) %>% list_rbind()
+    pval <- t.test(x,y,var.equal=TRUE,alpha=alpha)$p.value
+    d <- cohens_d(n,n,mean(x),mean(y),sd(x),sd(y))
+    tibble(p = pval,d = d)}) %>% list_rbind()
 }
 
 visualize_output <- function(n,mu1,mu2,sd) {
