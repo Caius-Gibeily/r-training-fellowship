@@ -6,13 +6,13 @@ format: html
 
 ## Cohen's d
 
-2 - If we were interested in determining whether two samples truly came from separate distributions, knowing only the difference in means wouldn't be enough. Just as we grounded covariance into correlation by normalizing it against the scales of each variable's variance, we need to do something similar to quantify the *effect size*. We achieve this feat using `Cohen's d`. - Watch Steven Bradburn's video on calculating Cohen's d [here](https://www.youtube.com/watch?v=IetVSlrndpI) (**What Is And How To Calculate Cohen's d?**) and take a look at [this](https://rpsychologist.com/cohend/) illustration from RPsychologist.
+1 - If we were interested in determining whether two samples truly came from separate distributions, knowing only the difference in means wouldn't be enough. Just as we grounded covariance into correlation by normalizing it against the scales of each variable's variance, we need to do something similar to quantify the *effect size*. We achieve this feat using `Cohen's d`. - Watch Steven Bradburn's video on calculating Cohen's d [here](https://www.youtube.com/watch?v=IetVSlrndpI){target="_blank"} (**What Is And How To Calculate Cohen's d?**) and take a look at [this](https://rpsychologist.com/cohend/){target="_blank"} illustration from RPsychologist.
 
--   Implement a function in R that takes as arguments the means, sample sizes and standard deviations of any two random variables, i.e. `x` and `y` and calculates Cohen's d. You function may begin like `cohens_d <- function(n1,n2,``mu1,mu2,``sd1,sd2) {...`.
+-   Implement a function in R that takes as arguments the means, sample sizes and standard deviations of any two variables and calculates Cohen’s d. Your function may begin like `cohens_d <- function(n1,n2,mu1,mu2,sd1,sd2) {...`.
 
 -   Let's test the function on the dataset we've come to know and love: the palmerpenguins. Like you did last week, load in the penguins dataset, selecting bill length. Filter for just Chinstrap and Gentoo penguin species. Grouping by species, return the summary statistics for each species' mean, sd and sample size. Input these values into your function! We'll see if our answers match in class.
 
--   The effect size is adjusted according to the pooled standard deviation of the two variables. Study the following code then run it. What do you notice about Cohen's d as sd1 and sd2 change? What about when sd1 and sd2 both equal 1?
+-   The effect size is adjusted according to the pooled standard deviation of the two variables. Study the following code then run it. Note: you will need an operational cohens_d function for this code to run. What do you notice about Cohen's d as sd1 and sd2 change? What about when sd1 and sd2 both equal 1? 
 
 ```{r}
 #| eval: false
@@ -28,21 +28,24 @@ d_vals <- map(sd_range, \(sd1) {
 }) %>% list_rbind(names_to="sd1")
 
 d_vals %>%
-    pivot_wider(
-    names_from = sd2,
-    values_from = d,
-    values_fill = 0
-  ) %>%
-  arrange(sd1) %>%
-  mutate(sd1 = sd1) 
-
+  mutate(sd1 = sd1,
+         sd2 = sd2) %>%
+  ggplot(aes(x = sd1, y = sd2, fill = d)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c() +
+  geom_text(aes(label = round(d, 2)), color = "white", size = 3) +
+  labs(x = "sd1", y = "sd2", fill = "Cohen's d") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(hjust = 1)
+  )
 ```
 
 -   Given the formula you've implemented as a function, how would you work backwards to calculate the mean difference for a given Cohen's d and pooled standard deviation? What mean difference would you expect for a Cohen's d of 0.5 and pooled sd of 3?
 
 ## Power and power analysis 
 
-3 - Let's now turn back to Josh and watch this [video](https://www.youtube.com/watch?v=Rsc5znwR5FA) (**Statistical Power, Clearly Explained!!!)** and then this [video](https://www.youtube.com/watch?v=VX_M3tIyiYk) (**Power Analysis, Clearly Explained!!!**). Check out this visualization too of [power analysis](https://rpsychologist.com/d3/nhst/)
+2 - Let's now turn back to Josh and watch this [video](https://www.youtube.com/watch?v=Rsc5znwR5FA){target="_blank"} (**Statistical Power, Clearly Explained!!!)** and then this [video](https://www.youtube.com/watch?v=VX_M3tIyiYk){target="_blank"} (**Power Analysis, Clearly Explained!!!**){target="_blank"}. Check out this visualization too of [power analysis](https://rpsychologist.com/d3/nhst/){target="_blank"}
 
 -   How would you explain statistical power to a fellow researcher? What do the different colored regions correspond to in the RPsychologist visualization?
 
@@ -68,13 +71,13 @@ pvals <- map(1:10000, \(i) {
 
 -   Finally, let's try to find the smallest sample size you'd need to achieve a power of 0.5 (50%) for a Cohen's d of 0.3. Hint: you could manually change values of n or try mapping through a range of n values. Reach out to us if you're not sure how to do this. How many observations would you need for approximately 0.8 (80%) power?
 
-4 - Brilliant! Let's now explore the concept of statistical power in the penguin dataset for the same two species and bill length.
+3 - Brilliant! Let's now explore the concept of statistical power in the penguin dataset for the same two species and bill length.
 
--   Using simulation, let's calculate the power of the observed data. Hint: use the summary statistics (mean, sd) as inputs into the code block in Q3, calculating the proportion of significant samples.
+-   Using simulation, let's calculate the power of the observed data. Hint: use the summary statistics (mean, sd) as inputs into the code block in Q2, calculating the proportion of significant samples.
 
 -   Wait a moment, did this analysis make sense? What are the problems of calculating statistical power after you have already collected data and calculated effect size? Does it actually give you any new information?
 
-5 - It's now time to introduce `pwr` , a helpful package for running power analyses. When running such analyses, you will have precisely three out of the four parameters: power, n, d and alpha with an interest in computing the unknown parameter. `install.packages("pwr")` and `library(pwr)` if the package isn't installed on your device. You can find more information about `pwr` [here](https://cran.r-project.org/web/packages/pwr/vignettes/pwr-vignette.html).
+4 - It's now time to introduce `pwr` , a helpful package for running power analyses. When running such analyses, you will have precisely three out of the four parameters: power, n, d and alpha with an interest in computing the unknown parameter. `install.packages("pwr")` and `library(pwr)` if the package isn't installed on your device. You can find more information about `pwr` [here](https://cran.r-project.org/web/packages/pwr/vignettes/pwr-vignette.html){target="_blank"}.
 
 -   Let's start by reusing the value of Cohen's d (0.3) and sample size (n=20) from Q3. Use the code below to calculate the theoretical power you'd achieve. How does it compare with the value you empirically calculated?
 
@@ -93,7 +96,7 @@ theoretical_power <- pwr.t.test(n = n, d = d, sig.level = alpha,
 -   If it's cheaper and faster, why shouldn't we always just opt for a quick and easy `n = 12` for every animal experiment or n=40 in psychological research? As we will see, underpowered studies don't just risk increasing the chance that we miss a true effect entirely (namely, falsely failing to reject the null hypothesis when the alternative was in fact true). It also risks something else...
 -   To understand this, let's put statistics aside for a moment. Imagine you're at a Sotherby's auction and Article 66 on the list has caught your eye. You, as well as everyone else at the auction, is an expert auctioneer. You can't be sure of its exact market value but you've formed a valid estimate of its value. Besides, you've now set your eye (and wallet) on it. After you've estimated what you think the true value is, you place your bid, consistent with that best guess. But so have 19 other expert auctioneers. You manage to outbid the others, congratulations! Going once, twice and the gavel declares you the winner of Article 66. The hapless losers file out of the auction house, while you proudly march to the platform to collect your expensive prize. However, upon further research, you discover the amount you paid grossly exceeded the intrinsic value of the item. You realize then that you have fallen into the dreaded *winner's curse*.
 
-6 - Let's start by adapting the code block that outputted `pvals` for $10^4$ simulations to also return the observed Cohen's d. This will give us a distribution of Cohen's d and the p-value after running a t-test.
+5 - Let's start by adapting the code block that outputted `pvals` for $10^4$ simulations to also return the observed Cohen's d. This will give us a distribution of Cohen's d and the p-value after running a t-test.
 
 ```{r}
 #| eval: false
@@ -116,17 +119,10 @@ pvals_d <- map(1:10000, \(i) {
 
 -   Given what you've seen now and the allegory of the unfortunate winning auctioneer, explain the winner's curse.
 
--   Let's end with a fun visualization that showcases these concepts! Copy the code below and run `visualize_output(n,mu1,mu2,sd_pooled)`, inspecting the plot. You can change these values too to your heart's content!
+6 -   Let's end with a fun visualization that showcases these concepts! Copy the code below and run `visualize_output(n,mu1,mu2,sd_pooled)`, inspecting the plot. You can change these values too to your heart's content! Also think about what we said about d values that were both significant and negative (shown as red dots in the plot below). Why do these inverted and significant d values occur at low power? Hint: use the RPsychologist visualization.
 
 ```{r}
 #| eval: FALSE
-
-cohens_d <- function(n1, n2, m1, m2, sd1, sd2) {
-  sp <- sqrt(((n1 - 1)*sd1^2 + (n2 - 1)*sd2^2) / (n1 + n2 - 2))
-  (m1 - m2) / sp
-}
-
-
 simulate_pvals <- function(n, mu1, mu2, sd) {
   map(1:500, \(i) {
     x <- rnorm(n, mean = mu1, sd = sd)
