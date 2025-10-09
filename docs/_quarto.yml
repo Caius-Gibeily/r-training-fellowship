@@ -32,6 +32,7 @@ website:
           - isr/cov.qmd
           - isr/se.qmd
           - isr/perm_hyp.qmd
+          - isr/power2.qmd
           
       # - section: Exercises and Grading
       #   contents:

@@ -1,0 +1,187 @@
+---
+title: "Session 7: Cohen's d, statistical power & power analysis"
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - tidyverse
+    - pwr
+---
+
+{{< include ../_extensions/live/_knitr.qmd >}}
+
+## Cohen's d
+
+2 - If we were interested in determining whether two samples truly came from separate distributions, knowing only the difference in means wouldn't be enough. Just as we grounded covariance into correlation by normalizing it against the scales of each variable's variance, we need to do something similar to quantify the *effect size*. We achieve this feat using `Cohen's d`. - Watch Steven Bradburn's video on calculating Cohen's d [here](https://www.youtube.com/watch?v=IetVSlrndpI) (**What Is And How To Calculate Cohen's d?**) and take a look at [this](https://rpsychologist.com/cohend/) illustration from RPsychologist.
+
+-   Implement a function in R that takes as arguments the means, sample sizes and standard deviations of any two random variables, i.e. `x` and `y` and calculates Cohen's d. You function may begin like `cohens_d <- function(n1,n2,``mu1,mu2,``sd1,sd2) {...`.
+
+-   Let's test the function on the dataset we've come to know and love: the palmerpenguins. Like you did last week, load in the penguins dataset, selecting bill length. Filter for just Chinstrap and Gentoo penguin species. Grouping by species, return the summary statistics for each species' mean, sd and sample size. Input these values into your function! We'll see if our answers match in class.
+
+-   The effect size is adjusted according to the pooled standard deviation of the two variables. Study the following code then run it. What do you notice about Cohen's d as sd1 and sd2 change? What about when sd1 and sd2 both equal 1?
+
+```{r}
+#| eval: false
+library(tidyverse)
+mu1 = 7
+mu2 = 5
+
+sd_range = set_names(seq(1,5,1))
+d_vals <- map(sd_range, \(sd1) {
+            map(sd_range, \(sd2) {
+              tibble(d = cohens_d(100,100,mu1,mu2,sd1,sd2))
+            }) %>% list_rbind(names_to="sd2")
+}) %>% list_rbind(names_to="sd1")
+
+d_vals %>%
+    pivot_wider(
+    names_from = sd2,
+    values_from = d,
+    values_fill = 0
+  ) %>%
+  arrange(sd1) %>%
+  mutate(sd1 = sd1) 
+
+```
+
+-   Given the formula you've implemented as a function, let's say you were now interested in working backwards to calculate the mean difference for a given Cohen's d.
+
+-   Let's confirm this works: for a Cohen's d of 0.5 and a pooled standard deviation of 3, determine the mean difference you would theoretically expect.
+
+3 - Let's now turn back to Josh and watch this [video](https://www.youtube.com/watch?v=Rsc5znwR5FA) (**Statistical Power, Clearly Explained!!!)** and then this [video](https://www.youtube.com/watch?v=VX_M3tIyiYk) (**Power Analysis, Clearly Explained!!!**). Check out this visualization too of [power analysis](https://rpsychologist.com/d3/nhst/)
+
+-   How would you explain statistical power to a fellow researcher? What do the different colored regions correspond to in the RPsychologist visualization?
+
+-   We'll now try to empirically calculate the statistical power on simulated variables `x` and `y` with known population means and sds. Like before, we'll run 10000 iterations. For each sample, we will run a t-test (if you're thinking we could also use permutation between the two variables, you're right! For computational speed, however, the t-test will be faster.). While we used `t_test` from the infer package last week, it runs more slowly than the base R `t.test`. For single t-tests, this is fine but given the 10k simulations we'll be running, `t.test` will come in handy. Study the following code:
+
+```{r}
+#| eval: false
+
+pvals <- map(1:10000, \(i) { 
+    x <- rnorm(n, mean = mu1, sd = sd)
+    y <- rnorm(n, mean = mu2, sd = sd)
+    pval <- t.test(x,y,var.equal=TRUE,alpha=alpha)$p.value
+    tibble(p = pval)}) %>% list_rbind()
+
+
+```
+
+-   Let's now use the code to calculate the power to detect whether there is a significant difference in the means between two normally distributed variables, `x` and `y`. Each sample will have `n=20` observations and the population sd for both variables we'll set at `4`. The true mean of `x` is 10. Using what you found above, find the mean of `y` if the true Cohen's d between `x` and `y` is 0.3 (hint: calculate the mean difference first).
+
+-   Input the means, sds and n into the code block above and let it run! For the standard alpha = 0.05, what proportion of samples returned a significant value? Let's just confirm, what have you just calculated? Make sure to keep a note of these proportions.
+
+-   Let's try this again for a true Cohen's d of 0.8. What do you get now?
+
+-   Finally, let's try to find the smallest sample size you'd need to achieve a power of 0.5 (50%) for a Cohen's d of 0.3. Hint: you could manually change values of n or try mapping through a range of n values. Reach out to us if you're not sure how to do this. How many observations would you need for approximately 0.8 (80%) power?
+
+4 - Brilliant! Let's now explore the concept of statistical power in the penguin dataset for the same two species and bill length.
+
+-   Using simulation, let's calculate the power of the observed data. Hint: use the summary statistics (mean, sd) as inputs into the code block in Q3, calculating the proportion of significant samples.
+
+-   Wait a moment, did this analysis make sense? What are the problems of calculating statistical power after you have already collected data and calculated effect size? Does it actually give you any new information?
+
+5 - It's now time to introduce `pwr` , a helpful package for running power analyses. When running such analyses, you will have precisely three out of the four parameters: power, n, d and alpha with an interest in computing the unknown parameter. `install.packages("pwr")` and `library(pwr)` if the package isn't installed on your device. You can find more information about `pwr` [here](https://cran.r-project.org/web/packages/pwr/vignettes/pwr-vignette.html).
+
+-   Let's start by reusing the value of Cohen's d (0.3) and sample size (n=20) from Q3. Use the code below to calculate the theoretical power you'd achieve. How does it compare with the value you empirically calculated?
+
+```{r}
+#| eval: false
+
+theoretical_power <- pwr.t.test(n = n, d = d, sig.level = alpha, 
+                                type = "two.sample", alternative = "two.sided")$power
+
+```
+
+-   Let's now find the theoretical sample size you'd need to achieve a power of 0.5 (50%) and a Cohen's d of 0.3. Now 0.8 (80%) How close were your previous empirical estimates?
+
+## Winner's curse and the danger of low-powered designs
+
+-   If it's cheaper and faster, why shouldn't we always just opt for a quick and easy `n = 12` for every animal experiment or n=40 in psychological research? As we will see, underpowered studies don't just risk increasing the chance that we miss a true effect entirely (namely, falsely failing to reject the null hypothesis when the alternative was in fact true). It also risks something else...
+-   To understand this, let's put statistics aside for a moment. Imagine you're at a Sotherby's auction and Article 66 on the list has caught your eye. You, as well as everyone else at the auction, is an expert auctioneer. You can't be sure of its exact market value but you've formed a valid estimate of its value. Besides, you've now set your eye (and wallet) on it. After you've estimated what you think the true value is, you place your bid, consistent with that best guess. But so have 19 other expert auctioneers. You manage outbid the others, congratulations! Going once, twice and the gavel declares you the winner of Article 66. The hapless losers file out of the auction house, while you proudly march to the platform to collect your expensive prize. However, upon further research, you discover the amount you paid grossly exceeded the intrinsic value of the item. You realize then that you have fallen into the dreaded *winner's curse*.
+
+6 - Let's start by adapting the code block that outputted `pvals` for $10^4$ simulations to also returned the observed Cohen's d. This will give us a distribution of Cohen's d and the p-value after running a t-test.
+
+```{r}
+#| eval: false
+pvals_d <- map(1:10000, \(i) { 
+    x <- rnorm(n, mean = mu1, sd = sd)
+    y <- rnorm(n, mean = mu2, sd = sd)
+    pval <- t.test(x,y,var.equal=TRUE,alpha=alpha)$p.value
+    d <- cohens_d(n,n,mean(x),mean(y),sd(x),sd(y))
+    tibble(p = pval,d = d)}) %>% list_rbind()
+
+```
+
+-   Use `pwr` to calculate the sample size you'd need to achieve a power of 0.15 (15%) for a Cohen's d of 0.5 (set `mu1=22` and `mu2=20` and `sd=4` (for both x and y) and n to the determined sample size). Now run the code!
+
+-   What's the mean Cohen's d of the output? Now filter your Cohen's d values to return only those that were significant (p\<0.05). Calculate the mean of these filtered d values.
+
+-   Now use `arrange()` to sort d in ascending order. What are the smallest significant *and positive* and significant *and negative* d values you found? How does it compare to the true Cohen's d (=0.5)? Plot a histogram of Cohen's d values, using `vline()` to show the overall mean Cohen's d, the smallest significant negative and positive Cohen's d and the mean Cohen's d after filtering for significant p-values.
+
+-   Now do the same thing for powers of 0.3, 0.5 and 0.8. What do you notice about the difference between the mean Cohen's d before filtering and the smallest significant d as power increases?
+
+-   Given what you've seen now and the allegory of the unfortunate winning auctioneer, explain the winner's curse.
+
+-   Let's end with a fun visualization that showcases these concepts! Run the parameters below in the browser and inspect the plot. You can change these values too to your heart's content!
+
+```{r}
+#| echo: FALSE
+library(tidyverse)
+library(pwr)
+
+cohens_d <- function(n1, n2, m1, m2, sd1, sd2) {
+  sp <- sqrt(((n1 - 1)*sd1^2 + (n2 - 1)*sd2^2) / (n1 + n2 - 2))
+  (m1 - m2) / sp
+}
+
+
+simulate_pvals <- function(n, mu1, mu2, sd) {
+  map(1:500, \(i) {
+    x <- rnorm(n, mean = mu1, sd = sd)
+    y <- rnorm(n, mean = mu2, sd = sd)
+    test <- t.test(x, y, var.equal = TRUE)
+    d <- cohens_d(n, n, mean(x), mean(y), sd(x), sd(y))
+    tibble(
+      p = test$p.value,
+      d = d
+    )
+  }) %>% list_rbind()
+}
+
+visualize_output <- function(n,mu1,mu2,sd) {
+  d <- cohens_d(n,n,mu1,mu2,sd,sd)
+  
+  nbatches <- map(set_names(seq(10,250,20)), \(n) { 
+    power <- pwr.t.test(n = n, d = d, sig.level = 0.05)$power
+    d_sims <- simulate_pvals(n,mu1,mu2,sd) %>% 
+      mutate(iteration = n, power = power)}) %>% list_rbind() %>% 
+      mutate(col = case_when(d < 0 & p < 0.05 ~ "red",
+                d > 0 & p < 0.05 ~ "blue",
+                TRUE ~ "grey"))
+      
+  p <- ggplot(nbatches,aes(x=iteration, y = d,colour = I(col))) +
+    geom_point(position = "jitter") + 
+    geom_hline(yintercept=d,linetype="dashed",linewidth=1) + theme_minimal() + 
+    labs(x = "Sample size", y = "Cohen's d") +
+    geom_text(
+      data = nbatches %>% distinct(iteration, power),
+      aes(x = iteration, y = 1.1, label = round(power, 2)),
+      inherit.aes = FALSE,
+      size = 3.5,
+      fontface = "bold"
+    ) +
+    theme_minimal() +
+    labs(x = "Sample size", y = "Cohen's d")
+  p
+}
+```
+
+```{r}
+
+n <- 30
+mu1 <- 16
+mu2 <- 15
+sd_pooled <- 5
+
+visualize_output(n,mu1,mu2,sd_pooled)
+```
