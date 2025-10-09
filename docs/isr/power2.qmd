@@ -34,7 +34,7 @@ d_vals %>%
   labs(x = "sd1", y = "sd2", fill = "Cohen's d") +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(hjust = 1)
+    axis.text.x = element_text(hjust = 1))
 ```
 
 -   Given the formula you've implemented as a function, how would you work backwards to calculate the mean difference for a given Cohen's d and pooled standard deviation? What mean difference would you expect for a Cohen's d of 0.5 and pooled sd of 3?
