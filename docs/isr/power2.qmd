@@ -3,7 +3,6 @@ title: "Session 7: Cohen's d, statistical power & power analysis"
 format: html
 ---
 
-
 ## Cohen's d
 
 1 - If we were interested in determining whether two samples truly came from separate distributions, knowing only the difference in means wouldn't be enough. Just as we grounded covariance into correlation by normalizing it against the scales of each variable's variance, we need to do something similar to quantify the *effect size*. We achieve this feat using `Cohen's d`. - Watch Steven Bradburn's video on calculating Cohen's d [here](https://www.youtube.com/watch?v=IetVSlrndpI){target="_blank"} (**What Is And How To Calculate Cohen's d?**) and take a look at [this](https://rpsychologist.com/cohend/){target="_blank"} illustration from RPsychologist.
@@ -12,7 +11,7 @@ format: html
 
 -   Let's test the function on the dataset we've come to know and love: the palmerpenguins. Like you did last week, load in the penguins dataset, selecting bill length. Filter for just Chinstrap and Gentoo penguin species. Grouping by species, return the summary statistics for each species' mean, sd and sample size. Input these values into your function! We'll see if our answers match in class.
 
--   The effect size is adjusted according to the pooled standard deviation of the two variables. Study the following code then run it. Note: you will need an operational cohens_d function for this code to run. What do you notice about Cohen's d as sd1 and sd2 change? What about when sd1 and sd2 both equal 1? 
+-   The effect size is adjusted according to the pooled standard deviation of the two variables. Study the following code then run it. Note: you will need an operational cohens_d function for this code to run. What do you notice about Cohen's d as sd1 and sd2 change? What about when sd1 and sd2 both equal 1?
 
 ```{r}
 #| eval: false
@@ -43,9 +42,9 @@ d_vals %>%
 
 -   Given the formula you've implemented as a function, how would you work backwards to calculate the mean difference for a given Cohen's d and pooled standard deviation? What mean difference would you expect for a Cohen's d of 0.5 and pooled sd of 3?
 
-## Power and power analysis 
+## Power and power analysis
 
-2 - Let's now turn back to Josh and watch this [video](https://www.youtube.com/watch?v=Rsc5znwR5FA){target="_blank"} (**Statistical Power, Clearly Explained!!!)** and then this [video](https://www.youtube.com/watch?v=VX_M3tIyiYk){target="_blank"} (**Power Analysis, Clearly Explained!!!**){target="_blank"}. Check out this visualization too of [power analysis](https://rpsychologist.com/d3/nhst/){target="_blank"}
+2 - Let's now turn back to Josh and watch this [video](https://www.youtube.com/watch?v=Rsc5znwR5FA){target="_blank"} (**Statistical Power, Clearly Explained!!!)** and then this [video](https://www.youtube.com/watch?v=VX_M3tIyiYk){target="_blank"} (**Power Analysis, Clearly Explained!!!**). Check out this visualization too of [power analysis](https://rpsychologist.com/d3/nhst/){target="_blank"}
 
 -   How would you explain statistical power to a fellow researcher? What do the different colored regions correspond to in the RPsychologist visualization?
 
@@ -113,13 +112,13 @@ pvals_d <- map(1:10000, \(i) {
 
 -   What's the mean Cohen's d of the output? Now filter your Cohen's d values to return only those that were significant (p\<0.05). Calculate the mean of these filtered d values.
 
--   Now use `arrange()` to sort d in ascending order. What are the smallest significant *and positive* and significant *and negative* d values you found? How does it compare to the true Cohen's d (=0.5)? Plot a histogram of Cohen's d values, using `vline()` to show the overall mean Cohen's d, the smallest significant negative and positive Cohen's d and the mean Cohen's d after filtering for significant p-values.
+-   Now use `arrange()` to sort d in ascending order. What are the smallest significant *and positive* and significant *and negative* d values you found? How does it compare to the true Cohen's d (=0.5)? Plot a histogram of Cohen's d values, using `geom_vline()` to show the overall mean Cohen's d, the smallest significant negative and positive Cohen's d and the mean Cohen's d after filtering for significant p-values.
 
 -   Now do the same thing for powers of 0.3, 0.5 and 0.8. What do you notice about the difference between the mean Cohen's d before filtering and the smallest significant d as power increases?
 
 -   Given what you've seen now and the allegory of the unfortunate winning auctioneer, explain the winner's curse.
 
-6 -   Let's end with a fun visualization that showcases these concepts! Copy the code below and run `visualize_output(n,mu1,mu2,sd_pooled)`, inspecting the plot. You can change these values too to your heart's content! Also think about what we said about d values that were both significant and negative (shown as red dots in the plot below). Why do these inverted and significant d values occur at low power? Hint: use the RPsychologist visualization.
+6 - Let's end with a fun visualization that showcases these concepts! Copy the code below and run `visualize_output(n,mu1,mu2,sd_pooled)`, inspecting the plot. You can change these values too to your heart's content! Also think about what we said about d values that were both significant and negative (shown as red dots in the plot below). Why do these inverted and significant d values occur at low power? Hint: use the RPsychologist visualization.
 
 ```{r}
 #| eval: FALSE
@@ -168,4 +167,3 @@ sd_pooled <- 5
 ## run
 visualize_output(n,mu1,mu2,sd_pooled)
 ```
-
