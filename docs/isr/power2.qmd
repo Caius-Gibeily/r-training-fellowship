@@ -122,12 +122,10 @@ pvals_d <- map(1:10000, \(i) {
 
 -   Given what you've seen now and the allegory of the unfortunate winning auctioneer, explain the winner's curse.
 
--   Let's end with a fun visualization that showcases these concepts! Run the parameters below in the browser and inspect the plot. You can change these values too to your heart's content!
+-   Let's end with a fun visualization that showcases these concepts! Copy the code below and run `visualize_output(n,mu1,mu2,sd_pooled)`, inspecting the plot. You can change these values too to your heart's content!
 
 ```{r}
-#| echo: FALSE
-library(tidyverse)
-library(pwr)
+#| eval: FALSE
 
 cohens_d <- function(n1, n2, m1, m2, sd1, sd2) {
   sp <- sqrt(((n1 - 1)*sd1^2 + (n2 - 1)*sd2^2) / (n1 + n2 - 2))
@@ -174,14 +172,14 @@ visualize_output <- function(n,mu1,mu2,sd) {
     labs(x = "Sample size", y = "Cohen's d")
   p
 }
-```
 
-```{r}
-
+## set params
 n <- 30
 mu1 <- 16
 mu2 <- 15
 sd_pooled <- 5
 
+## run
 visualize_output(n,mu1,mu2,sd_pooled)
 ```
+
