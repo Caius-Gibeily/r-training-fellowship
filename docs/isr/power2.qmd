@@ -5,7 +5,7 @@ format: html
 
 ## Cohen's d
 
-1 - If we were interested in determining whether two samples truly came from separate distributions, knowing only the difference in means wouldn't be enough. Just as we grounded covariance into correlation by normalizing it against the scales of each variable's variance, we need to do something similar to quantify the *effect size*. We achieve this feat using `Cohen's d`. - Watch Steven Bradburn's video on calculating Cohen's d [here](https://www.youtube.com/watch?v=IetVSlrndpI){target="_blank"} (**What Is And How To Calculate Cohen's d?**) and take a look at [this](https://rpsychologist.com/cohend/){target="_blank"} illustration from RPsychologist.
+1 - If we were interested in determining whether two samples truly came from separate distributions, knowing only the difference in means wouldn't be enough. Just as we grounded covariance into correlation by normalizing it against the scales of each variable's variance, we need to do something similar to quantify the *effect size*. We achieve this feat using `Cohen's d`. Watch Steven Bradburn's video on calculating Cohen's d [here](https://www.youtube.com/watch?v=IetVSlrndpI){target="_blank"} (**What Is And How To Calculate Cohen's d?**) and take a look at [this](https://rpsychologist.com/cohend/){target="_blank"} illustration from RPsychologist.
 
 -   Implement a function in R that takes as arguments the means, sample sizes and standard deviations of any two variables and calculates Cohen’s d. Your function may begin like `cohens_d <- function(n1,n2,mu1,mu2,sd1,sd2) {...`.
 
@@ -149,8 +149,7 @@ visualize_output <- function(n,mu1,mu2,sd) {
       size = 3.5,
       fontface = "bold"
     ) +
-    theme_minimal() +
-    labs(x = "Sample size", y = "Cohen's d")
+    theme_minimal()
   p
 }
 
