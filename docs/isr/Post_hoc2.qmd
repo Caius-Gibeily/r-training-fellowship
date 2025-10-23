@@ -21,11 +21,13 @@ We saw that an ANOVA applied to these data resulted in a significant p-value. No
 
 1. How many unique pair-wise comparisons do we need to perform in this case (remember that for example testing A vs B will be the same as testing B vs A)? Can you figure out a formula that will calculate the number of comparisons for any number of groups? 
 
-* Perform the pair-wise comparisons using permutation testing. You can either reuse code that you have written before or use functions from the `infer` package. Collect the p-values in a tibble and make sure you include a column specifying for each p-value the groups that were compared. Also include information about the direction of the effect. 
+  * Perform the pair-wise comparisons using permutation testing. You can either reuse code that you have written before or use functions from the `infer` package. Collect the p-values in a tibble and make sure you include a column specifying for each p-value the groups that were compared. Also include information about the direction of the effect. 
 
 It is now possible to look at the p-values you have generated and draw conclusions about which groups are different from each other by assessing the statistical significance. But there is a catch. Running all of those tests was not just a somewhat tedious coding exercise, the fact that we did multiple pair-wise comparisons also comes with consequences regarding how we should interpret the significance of the p-values.
 
-We have discussed before that the conventional $\alpha$ threshold we use to determine significance given the null represents the probability of a type I or false positive error we tolerate when conducting a significance test. We will examine how that probability is affected by conducting multiple tests between fully independent samples drawn from the same null distribution below:  
+2. We have discussed before that the conventional $\alpha$ threshold we use to determine significance given the null represents the probability of a type I or false positive error we tolerate when conducting a significance test. We will examine how that probability is affected by conducting multiple tests between fully independent samples drawn from the same null distribution.
+
+  * Study the `fwer_independent` tibble. Use ggplot to show how the probability of a type I error `fwer` changes as the number of `total_tests` increases. After approximately how many tests is the probability of a type I error > 0.5? 
 
 ```{r}
 #| eval: FALSE 
@@ -57,9 +59,7 @@ fwer_independent <- independent %>%
 
 ```
 
-2. Study the code above and the `fwers` tibble. Use ggplot to show how the probability of a type I error `fwer` changes as the number of `total_tests` increases. After approximately how many tests is the probability of a type I error > 0.5? 
-
-* Now `mutate` a new column in `fwers` that divides `n_type_I`, the number of type I errors committed, by `total_tests`. The proportions should stay at around 5% as we increase the number of total_tests we run. That means we can expect the number of type I errors to increase linearly at 5% of the total number of comparisons we run. Why is this a problem?
+  * Now `mutate` a new column in `fwer_independent` that divides `mean_n_type_I`, the number of type I errors committed, by `total_tests`. The proportions should stay at around 5% as we increase the number of total tests we run. That means we can expect the number of type I errors to increase linearly at 5% of the total number of comparisons we run. Why is this a problem for drawing conclusions from our data?
 
 3. Now that we have seen that multiple comparisons increase the chance of finding false positive results, we will next look at some methods that can be used to alleviate this problem. 
 
@@ -94,7 +94,6 @@ correlated <- map(n_var, \(i) {
 
   
   * What would we expect the theoretical FWER to be assuming tests are independent as we increase the number of comparisons? Steven covers the equation at 1:00 in the video. Using the theoretical FWER we would expect at an alpha=0.05, replace the blanks in `fwer_theoretical`. 
-  
  
   
 ```{r}
@@ -174,7 +173,7 @@ ps %>%
   
   * The `rcompanion` package has a function that uses some computational trickery to run post hoc permutation tests really fast. It even has the same p-value correction options as the `p.adjust()` function built in. Find the function we are referring to (*pairwise* is a good search term to include) and use it with the `d1` data. 
   
-4. With multiple correction methods, which should you use? The choice is really one of trading off the balance between your tolerance of false positives and negatives, or rather your power.  Let's explore the effect of using the methods we've discussed - Bonferroni and Benjamini-Hochberg vs no correction - using simulated data. Similar to the example Josh presented on testing the effect of a drug on gene expression across 10,000 genes, consider the case where only a subset of comparisons reflects a true effect, while the remainder are drawn from the same null distribution. In the simulation above, we model this scenario by drawing samples x and y either from identical distributions under the null hypothesis (H0_true) or from different distributions under the alternative (H1_true). Currently, 20% of the pairwise comparisons are drawn from different distributions, representing true effects, while the remaining 80% reflect null cases. The function `generate_mixed_draws` creates a tibble of simulated results, where each row corresponds to a pairwise test between two simulated variables. Each test returns a p-value. Again, don't worry about fully understanding the code (it will take ~1 minute to run):
+4. With multiple correction methods, which should you use? The choice is really one of trading off the balance between your tolerance of false positives and negatives, or rather your power. Let's explore the effect of using the methods we've discussed - Bonferroni and Benjamini-Hochberg vs no correction - using simulated data. Similar to the example Josh presented on testing the effect of a drug on gene expression across 10,000 genes, consider the case where only a subset of comparisons reflects a true effect, while the remainder are drawn from the same null distribution. In the simulation above, we model this scenario by drawing samples x and y either from identical distributions under the null hypothesis (H0_true) or from different distributions under the alternative (H1_true). Currently, 20% of the pairwise comparisons are drawn from different distributions, representing true effects, while the remaining 80% reflect null cases. The function `generate_mixed_draws` creates a tibble of simulated results, where each row corresponds to a pairwise test between two simulated variables. Each test returns a p-value. Again, don't worry about fully understanding the code (it will take ~1 minute to run):
 
 ```{r}
 #| eval: FALSE
@@ -207,7 +206,6 @@ generate_mixed_draws <- function(n = 50, mu_null = 0, mu_alt = 0.5, sd = 1, prob
 
 ```
 
-
 * Let's now implement different correction procedures to examine their effect on FWER, power and the number of type I errors. Study the code, replacing the blanks with relevant fields to return type I errors, true positives (`true_pos`) and power:
 ```{r}
 #| eval: FALSE
@@ -231,7 +229,7 @@ calc_disc_rate_adj <- function(results,method) {
 
 }
 ```
-* Run the following code and inspect the `fwer` and `mean_power` trends under each method. We will visualize this a bit more clearly in the next code block
+* Run the following code and inspect the `fwer` and `mean_power` trends under each method. We will visualize this a bit more clearly in the following code block.
 ```{r}
 #| eval: FALSE
 methods <- c("none","bonferroni", "BH") %>% set_names()
@@ -273,7 +271,6 @@ ggplot(fwer_correction_long, aes(x = total_tests, y = value, color = method)) +
   )
 
 ```
-
 
 5. The final thing after running an ANOVA, finding a significant omnibus test p-value and continuing with post hoc tests, is to plot the results. Oftentimes we see plots in papers showing group stats (as boxplots or bar graphs or something of that sort) with annotations added to communicate the significance of pair-wise comparisons. This is easy to do if you know how to make ggplots, with help from the `ggpubr` and `rstatix` packages. Let's revisit the `penguins` data. Investigate some relationship in this data set you find interesting, create an appropriate plot and check out [this article](https://www.datanovia.com/en/blog/how-to-add-p-values-onto-basic-ggplots/){target="_blank"} on how to add p-value annotations. You will probably find the *Pairwise comparisons* section most helpful. Note that a function named `t_test()` from the `rstatix` package is used here. This is the same name as a function in the `infer` package we have used before, so if you run into problems with the code in the article, try unloading the `infer` package. 
 
