@@ -1,0 +1,280 @@
+---
+title: "Session 9:  Post hoc tests & multiple comparisons"
+format: html
+---
+
+Last week we introduced a new type of statistical test that helps us to determine if there is a significant difference in means when comparing more than two groups; one-way ANalysis Of VAriance (ANOVA). We discussed that the null hypothesis in this case states that the group means are all the same (come from the same population). Therefore, if we run an ANOVA and reject the null hypothesis we conclude that at least one mean is different from the others. But this all we can say based on the results from an ANOVA. To be able to get a more fine-grained understanding of differences in our data, we need to conduct follow-up analyses. In the world of ANOVAs this is referred to as *post hoc* tests. This short [video](https://youtu.be/qrJI8BFbhyA?si=CgWyw7HeJhdS0ro3){target="_blank"} explains the main concepts. The idea is really simple, we conduct individual comparisons between every possible pair of groups (often referred to as *pair-wise comparisons*) to pinpoint exactly where the significant differences lie. We can even use types of tests we are already familiar with; t-tests or better yet permutation tests. 
+
+We will now revisit the `d1` data from last week. The code to generate this data is, for your convenience, provided in the code chunk below.
+
+```{r}
+#| eval: false
+d1 <- tibble(values = c(2.95, 5.12, 5.68, 5.43, 5.12, 
+                        2.81, 1.62, 2.51, 1.94, 3.92, 
+                        5.72, 6.81, 4.88, 4.67, 
+                        1.81, 4.32, 3.09, 3.02), 
+             group = c(rep(c("A", "B"), each = 5), 
+                       rep(c("C", "D"), each = 4)))
+```
+
+We saw that an ANOVA applied to these data resulted in a significant p-value. Now it is time to follow up on this [omnibus test](https://www.statology.org/omnibus-test/){target="_blank"} with some post hoc pair-wise comparisons. 
+
+1. How many unique pair-wise comparisons do we need to perform in this case (remember that for example testing A vs B will be the same as testing B vs A)? Can you figure out a formula that will calculate the number of comparisons for any number of groups? 
+
+* Perform the pair-wise comparisons using permutation testing. You can either reuse code that you have written before or use functions from the `infer` package. Collect the p-values in a tibble and make sure you include a column specifying for each p-value the groups that were compared. Also include information about the direction of the effect. 
+
+It is now possible to look at the p-values you have generated and draw conclusions about which groups are different from each other by assessing the statistical significance. But there is a catch. Running all of those tests was not just a somewhat tedious coding exercise, the fact that we did multiple pair-wise comparisons also comes with consequences regarding how we should interpret the significance of the p-values.
+
+We have discussed before that the conventional $\alpha$ threshold we use to determine significance given the null represents the probability of a type I or false positive error we tolerate when conducting a significance test. We will examine how that probability is affected by conducting multiple tests between fully independent samples drawn from the same null distribution below:  
+
+```{r}
+#| eval: FALSE 
+
+n_var <- seq(2,25,5)
+
+independent <- map(n_var, \(i) {
+  total_tests <- i * (i - 1) / 2  
+  map(1:100, \(j) {
+
+      map(1:total_tests, \(k) {
+        x <- rnorm(20, 0, 1)
+        y <- rnorm(20, 0, 1)
+        pval <- t.test(x, y, var.equal = TRUE)$p.value
+        tibble(n_var = i, total_tests = total_tests, iteration = j,  p = pval)
+      }) %>% list_rbind()
+  }) %>% list_rbind()
+}) %>% list_rbind()
+
+fwer_independent <- independent %>%
+  group_by(total_tests, iteration) %>%
+  summarise(any_type_I = any(p <= 0.05), n_type_I = sum(p <= 0.05), .groups = "drop") %>%
+  group_by(total_tests) %>%
+  summarise(
+    fwer = mean(any_type_I),
+    mean_n_type_I = mean(n_type_I),
+    .groups = "drop"
+  )
+
+```
+
+2. Study the code above and the `fwers` tibble. Use ggplot to show how the probability of a type I error `fwer` changes as the number of `total_tests` increases. After approximately how many tests is the probability of a type I error > 0.5? 
+
+* Now `mutate` a new column in `fwers` that divides `n_type_I`, the number of type I errors committed, by `total_tests`. The proportions should stay at around 5% as we increase the number of total_tests we run. That means we can expect the number of type I errors to increase linearly at 5% of the total number of comparisons we run. Why is this a problem?
+
+3. Now that we have seen that multiple comparisons increase the chance of finding false positive results, we will next look at some methods that can be used to alleviate this problem. 
+
+  * Start by watching [this video](https://youtu.be/HLzS5wPqWR0?si=3rzQc7B53h7NzOca){target="_blank"}. Here Steven gives a summary of what we already know by now; the effect of multiple comparisons on the family-wise error rate (FWER). He then goes through the *Bonferroni* method and shows how it can be used to correct the alpha level (the significance threshold) so that the FWER stays at approximately 5% irrespective of how many comparisons are performed. Many times however, we want to report adjusted p-values instead. In this case you compare the adjusted p-value to the original alpha (the magical 0.05) rather than comparing the original p-value to the adjusted alpha. The Bonferroni adjusted alpha is just the original alpha divided by the number of tests. Conversely, Bonferroni corrected p-values are just the original p-values... Yes, this is something we want you to figure out. Then apply the Bonferroni correction to the p-values (pair-wise comparisons) you calculated using the `d1` data. You want to make sure that you don't end up with any adjusted p-values greater than one so use for example the `ifelse()` function and set any value > 1 to 1.  
+  
+  * The Bonferroni method is easy to understand and applying it to your own data is trivial, but it is by no means a perfect method (more about this soon). Exercise 2 highlighted the FWER with multiple comparisons across completely independent samples. However, this condition is often too strict when applied to true data. For example, when conducting post hoc significance tests among groups in an ANOVA, the same groups will feature in multiple comparisons. If variable `a` is moderately correlated to `b` and `c`, then `a-b` and `a-c` tests will also be partially correlated. Since these tests are partially correlated, and the probability of getting a true negative per test (0.95) is greater than a false positive (0.05), there's a lower chance of getting a false positive than under fully independent tests.  This result ends up deflating the FWER and is one reason why the Bonferroni method can be too conservative or strict.
+
+To highlight how multiple comparisons on correlated tests deflate the FWER, let's use a similar approach to Exercise 2 and simulate random data deriving from the same null distribution. Except now, rather than drawing each comparison on fresh samples, we'll simulate a dataset with n 'groups' and perform all pairwise comparisons within it. The variables we create will be engineered to be moderately correlated to each other by creating a variable `x` and generating `nvar` variables, each a copy of x with added noise. Don't worry about understanding the following code (though we'd love you to!):
+```{r}
+#| eval: FALSE
+create_nvariables <- function(nvar, n, mean, sd, sd_noise) {
+  x <- rnorm(n = n, mean = mean, sd = sd)
+  dat <- map(1:nvar, \(i) {
+    tibble(!!paste0("var_", i) := x + rnorm(n = n, mean = 0, sd = sd_noise))
+  }) |>
+    list_cbind()
+  dat
+}
+
+correlated <- map(n_var, \(i) {
+ 
+  map(1:100, \(j) {
+    dat <- create_nvariables(i,20,0,1,sd_noise = 1)
+    combs <- combn(colnames(dat), 2)
+    
+    map2(dat[combs[1,]],dat[combs[2,]], \(c1,c2) {
+      pval <- t.test(c1,c2,var.equal=TRUE,alpha=0.05)$p.value
+      tibble(n_var = i, total_tests = dim(combs)[2], iteration = j,  p = pval)
+    }) %>% list_rbind()}) %>% list_rbind()}) %>% list_rbind()
+
+```
+
+  
+  * What would we expect the theoretical FWER to be assuming tests are independent as we increase the number of comparisons? Steven covers the equation at 1:00 in the video. Using the theoretical FWER we would expect at an alpha=0.05, replace the blanks in `fwer_theoretical`. 
+  
+ 
+  
+```{r}
+#| eval: FALSE
+fwer_correlated <- correlated  %>%
+  group_by(total_tests, iteration) %>%
+  summarise(any_type_I = any(p <= 0.05), n_type_I = sum(p <= 0.05), .groups = "drop") %>%
+  group_by(total_tests) %>%
+  summarise(
+    fwer = mean(any_type_I),
+    mean_n_type_I = mean(n_type_I),
+    .groups = "drop"
+  )
+
+fwer_theoretical <- tibble(
+  total_tests = fwer_independent$total_tests,
+  fwer = _____ ^ ______, 
+  mean_n_type_I = 0.05 * total_tests
+)
+
+fwer_combined <- bind_rows(list(indep = fwer_independent, 
+                                correl = fwer_correlated, 
+                                theor = fwer_theoretical), 
+                           .id = "type")
+
+```
+
+  * Now plot `fwer` against `total_tests` for our independent, correlated and theoretical FWERs (`indep`, `correl` and `theor`, respectively), grouping by `type`. Explain the difference in the FWER curve for the correlated tests with increasing tests relative to the independent tests. Try setting `sd_noise` in the code above to 0.6 instead. What do you notice now about the FWER curve for the correlated tests?
+  
+  We will further explore the consequences of using Bonferroni correction on power in exercise 4.
+  
+  * Let's now spend some time studying an alternative to the Bonferroni method. We return to StatQuest and [this video](https://youtu.be/K8LQSvtjcEo?si=ejOgPCccNmfkz4qK){target="_blank"} (*False Discovery Rates, FDR, clearly explained*). Josh explains how the Benjamini-Hochberg method corrects for multiple testing and around the 14:40 mark starts showing the math behind this method. We think it will be good to walk you through this and show how it can be written in R code. 
+  
+  Say we have a tibble like the one below with four p-values stored in a column called `p_values`. 
+  
+```{r}
+#| eval: false
+ps <- tibble(p_values = c(0.31, 0.27, 0.04, 0.58))
+```
+
+  * The first step is to take the tibble and sort the p-values in ascending order. This can be done using the `arrange()` function. Next, we assign a rank to each p-value so that the smallest value gets `rank = 1` and so on. For this we use `mutate()` and `row_number()`. 
+ 
+```{r}
+#| eval: false
+ps %>% 
+  arrange(p_values) %>% 
+  mutate(rank = row_number())
+```
+
+  * Then we calculate values that are the product of the p-values and the total number of p-values divided by the rank. We call these values `b` because they represent the *b* option in the StatQuest video. So far we have: 
+  
+```{r}
+#| eval: false
+ps %>% 
+  arrange(p_values) %>% 
+  mutate(rank = row_number(), 
+         b = p_values * (n() / rank))
+```
+
+  * The final step is to for each row, starting with the last one, find the minimum of `b` or, as we move up in the order or rows, the smallest `b` yet observed. This is of course a job for some iteration code, but we show it in a more manual way to better mimic Josh's walk-through in the video. We use the `case_when()` and `min()` functions and `[]` notation to subset the `b` vector. 
+  
+```{r}
+#| eval: false
+ps %>% 
+  arrange(p_values) %>% 
+  mutate(rank = row_number(), 
+         b = p_values * (n() / rank), 
+         p_fdr_adj = case_when(rank == 4 ~ min(b[4]),
+                               rank == 3 ~ min(b[3:4]),
+                               rank == 2 ~ min(b[2:4]),
+                               rank == 1 ~ min(b[1:4])))
+```  
+
+  * Great, we have a method to calculate FDR corrected p-values. Now it is your turn to use this method to correct the post hoc p-values from the `d1` data. You will have to make changes and add code so that it fits the number of tests you want to correct in this case. 
+  
+  * Per usual, after going through painstaking manual ways of calculating things, we now show you a simpler and faster option. There is a function called `p.adjust()` that makes it super easy to calculate adjusted p-values. It can be used with `mutate()` to create new columns with corrected values and several correction methods are available. Run `?p.adjust` and check out the help page to see how to use the methods we have covered so far. Compare your manual calculations to the output from the `p.adjust()` function. 
+  
+  * The `rcompanion` package has a function that uses some computational trickery to run post hoc permutation tests really fast. It even has the same p-value correction options as the `p.adjust()` function built in. Find the function we are referring to (*pairwise* is a good search term to include) and use it with the `d1` data. 
+  
+4. With multiple correction methods, which should you use? The choice is really one of trading off the balance between your tolerance of false positives and negatives, or rather your power.  Let's explore the effect of using the methods we've discussed - Bonferroni and Benjamini-Hochberg vs no correction - using simulated data. Similar to the example Josh presented on testing the effect of a drug on gene expression across 10,000 genes, consider the case where only a subset of comparisons reflects a true effect, while the remainder are drawn from the same null distribution. In the simulation above, we model this scenario by drawing samples x and y either from identical distributions under the null hypothesis (H0_true) or from different distributions under the alternative (H1_true). Currently, 20% of the pairwise comparisons are drawn from different distributions, representing true effects, while the remaining 80% reflect null cases. The function `generate_mixed_draws` creates a tibble of simulated results, where each row corresponds to a pairwise test between two simulated variables. Each test returns a p-value. Again, don't worry about fully understanding the code (it will take ~1 minute to run):
+
+```{r}
+#| eval: FALSE
+generate_mixed_draws <- function(n = 50, mu_null = 0, mu_alt = 0.5, sd = 1, probs = c(0.8, 0.2)) {
+  
+  n_var <- seq(3,24,4)
+  results <- map(n_var, \(i) {
+    total_tests <- (i * (i - 1) / 2)
+    n_H0 <- round(total_tests * probs[1])
+    n_H1 <- total_tests - n_H0
+    truth <- c(rep("H0_true", n_H0), rep("H1_true", n_H1))  
+    map(1:100, \(j) {
+      
+      map(1:total_tests, \(k) {
+        if (truth[k] == "H0_true") {
+          x <- rnorm(n, mean = mu_null, sd = sd)
+          y <- rnorm(n, mean = mu_null, sd = sd)
+        } else { 
+          x <- rnorm(n, mean = mu_null, sd = sd)
+          y <- rnorm(n, mean = mu_alt, sd = sd)
+        }
+        pval <- t.test(x, y, var.equal = TRUE)$p.value
+        tibble(n_var = i, total_tests = total_tests, iteration = j, truth = truth[k], p = pval)
+        }) %>% list_rbind()
+      
+    }) %>% list_rbind()
+  }) %>% list_rbind()
+  results
+}
+
+```
+
+
+* Let's now implement different correction procedures to examine their effect on FWER, power and the number of type I errors. Study the code, replacing the blanks with relevant fields to return type I errors, true positives (`true_pos`) and power:
+```{r}
+#| eval: FALSE
+calc_disc_rate_adj <- function(results,method) {
+  results %>% group_by(n_var, iteration) %>%
+    mutate(p_adj = p.adjust(p, method = method),
+    type_I = case_when(truth == _____ & ____ <= 0.05 ~ 1, 
+                       .default = 0),
+    true_pos = case_when(truth == ______ & _____ <= 0.05 ~ 1,
+                         .default = 0)
+  ) %>%
+  group_by(total_tests, iteration) %>%
+  summarise(any_type_I = any(type_I == 1), n_type_I = sum(type_I), power = sum(______)/n()*100, .groups = "drop") %>%
+  group_by(total_tests) %>%
+  summarise(
+    fwer = mean(any_type_I),
+    mean_n_type_I = mean(n_type_I),
+    mean_power = mean(power),
+    .groups = "drop"
+  ) 
+
+}
+```
+* Run the following code and inspect the `fwer` and `mean_power` trends under each method. We will visualize this a bit more clearly in the next code block
+```{r}
+#| eval: FALSE
+methods <- c("none","bonferroni", "BH") %>% set_names()
+
+fwer_correction <- map(methods, \(m) {
+  calc_disc_rate_adj(results,m)
+}) %>% list_rbind(names_to = "method")
+
+fwer_correction_long <- fwer_correction %>%  pivot_longer(
+    cols = c(fwer, mean_n_type_I, mean_power),
+    names_to = "metric",
+    values_to = "value"
+  )
+```
+
+* Inspect the plots. Can you explain why the power decreases following correction? Which correction approach would you use and why? Note how the mean number of type I errors is also constrained by our testing procedure. 
+```{r}
+#| eval: FALSE
+ggplot(fwer_correction_long, aes(x = total_tests, y = value, color = method)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  facet_wrap(~ metric, scales = "free_y", ncol = 1,
+             labeller = as_labeller(c(
+               fwer = "Familywise Error Rate",
+               mean_n_type_I = "Number of Type I Errors",
+               mean_power = "Power (%)"
+             ))) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    x = "Number of tests",
+    y = "Value",
+    color = "Correction Method",
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "top",
+    strip.text = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
+```
+
+
+5. The final thing after running an ANOVA, finding a significant omnibus test p-value and continuing with post hoc tests, is to plot the results. Oftentimes we see plots in papers showing group stats (as boxplots or bar graphs or something of that sort) with annotations added to communicate the significance of pair-wise comparisons. This is easy to do if you know how to make ggplots, with help from the `ggpubr` and `rstatix` packages. Let's revisit the `penguins` data. Investigate some relationship in this data set you find interesting, create an appropriate plot and check out [this article](https://www.datanovia.com/en/blog/how-to-add-p-values-onto-basic-ggplots/){target="_blank"} on how to add p-value annotations. You will probably find the *Pairwise comparisons* section most helpful. Note that a function named `t_test()` from the `rstatix` package is used here. This is the same name as a function in the `infer` package we have used before, so if you run into problems with the code in the article, try unloading the `infer` package. 
+
+  * The example in the article shared above uses theory-based t-tests (that is what the `t_test()` function from the `rstatix` package does) to calculate the post hoc p-values. But what about if you instead (as you should) prefer to use p-values from permutation tests. Here is another [article](https://www.datanovia.com/en/blog/ggpubr-how-to-add-p-values-generated-elsewhere-to-a-ggplot/){target="_blank"} describing how you can add p-values *computed from elsewhere*. Add multiple comparisons corrected (pick your favorite correction method) permutation-based (pick your favorite way to run the tests) p-values to your penguins plot. 

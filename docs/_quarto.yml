@@ -34,6 +34,7 @@ website:
           - isr/perm_hyp.qmd
           - isr/power2.qmd
           - isr/ANOVA.qmd
+          - isr/Post_hoc2.qmd
           
       # - section: Exercises and Grading
       #   contents:
