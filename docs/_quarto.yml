@@ -35,6 +35,7 @@ website:
           - isr/power2.qmd
           - isr/ANOVA.qmd
           - isr/Post_hoc2.qmd
+          - isr/stats_journal_club.qmd
           
       # - section: Exercises and Grading
       #   contents:
