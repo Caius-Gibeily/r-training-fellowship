@@ -1,0 +1,275 @@
+---
+title: "Session 12:  tests, odds ratios & Cramer's V"
+format: html
+---
+
+While we have previously been exploring numerical data types, we now turn to a fairly typical scenario of having count data.\
+1. To understand the logic behind the chi-squared test, we begin by considering a 2x2 contingency table. You will have encountered these previously in validations of a particular diagnostic test, including EarliPoint, where our interest lies in comparing the performance of some test against some ground truth value set. In the context of EarliPoint diagnostic prediction, we have two variables (EarliPoint-predicted diagnostic label and clinician-assessed diagnostic label) with two levels (autism predicted/not predicted for EarliPoint and child diagnosed/not diagnosed with autism by an expert clinician), thereby yielding four possible combinations. Review the table below and think about where the four possible scenarios would be placed:
+
+![](images/clipboard-3150409334.png){width="529"}
+
+These contingency tables allow us to represent the relationship between two variables in terms of how the frequencies of observations are separated across different categories.
+
+Say you were comparing the counts of users with Macs or PCs against handedness. Insofar as handedness is unlikely to affect one's choice of laptop, laptop choice is *not conditioned* on handedness, or rather, the two variables are not associated. One would therefore expect equal proportions of left- and right-handed users on Macs and PCs. Conversely, if we were we now to compare counts of users with iPhones vs android phones against Macs or PCs, we might hypothesise that there might be a biased count of iPhone + Mac users and PC + android users.
+
+1.  Let's simulate this scenario below by changing the probability of seeing Mac and PC users given those users have iPhones or android devices. `pmac_iphone` and `pmac_android` give us the probability of observing each group (Mac or PC) across phone categories. The first gives the expected probability that a Mac user has an iPhone, and the second, the probability of an android user owning a Mac. If phone choice has no impact on laptop, what probabilities would you expect for `pmac_iphone` and `pmac_android`? Fill in the blanks and run the code.
+
+```{r}
+#| eval: false
+pmac_iphone = ___
+pmac_android = ___
+n_obs = 1000
+
+b1 <- tibble(
+  
+  phone = rep(c("iphone","android"),c(n_obs/2,n_obs/2))) %>%
+  mutate(
+     laptop = c(
+      sample(c("mac","pc"), n_obs/2, 
+             replace = TRUE, 
+             prob = c(pmac_iphone,1-pmac_iphone)),
+             
+      sample(c("mac","pc"), n_obs/2, 
+             replace = TRUE, 
+             prob = c(pmac_android,1-pmac_android)))
+  ) %>% mutate(phone = fct_relevel(phone, c("iphone","android")))
+
+
+```
+
+-   Now let's use some base R magic to convert the `b1` tibble into a contingency table using the `table()` function.
+
+-   Inspect the observed counts you've tabulated. Under the assumption that phone choice has no impact on laptop choice, how many observations would you expect in each cell of the table?
+
+-   Create a new tibble, `b2` and adjust the probabilities such that the probability of getting a Mac given one owns an iPhone is 0.6 while the probability of a Mac given one owns an android is 0.4. What do you now expect the counts for each combination will be? Run the code again and examine the contingency table. Try the same thing, this time setting the probabilities to 0.8 and 0.2, respectively, and naming it `b3`.
+
+How might we quantify the extent to which one variable, i.e. iPhone or android ownership relates to another, namely, type of laptop? For 2x2 tables, the odds ratio (OR) provides an elegant approach to summarising the magnitude and direction of an association between group and category variables. Watch the first 3 minutes of [Odds and Log(odds), Clearly Explained!!!](https://www.youtube.com/watch?v=ARfXDSkQf1Y) and then [this](https://www.youtube.com/watch?v=ITi0SxmQTO8) video on calculating ORs from 2x2 tables.
+
+2.  Study the following code for manually calculating the OR from a contingency table. What are the `group` and `category` arguments? If we wanted to calculate the OR of owning a Mac given one owns an iPhone, what combinations of phone and laptop would `a`, `b`, `c` and `d` refer to?
+
+```{r}
+#| eval: false
+calc_OR <- function(data,group1,group2,category1,category2) {
+  cont_table <- table(data)
+  a <- cont_table[group1,category1]
+  b <- cont_table[group1,category2]
+  c <- cont_table[group2,category1]
+  d <- cont_table[group2,category2]
+  
+  OR <- ______
+  OR
+}
+```
+
+-   Use the function to calculate the ORs of owning a Mac given one has an iPhone vs an android for `b1`, `b2` and `b3`. How would you interpret these values? What does an OR = 1 mean?
+
+-   As we have examined previously, we are often interested in knowing the precision of a particular test statistic. For ORs, we can use bootstrapping to calculate the confidence intervals around it. Let's try this now for the three b datasets you generated with different probability value pairs. We will reuse the bootstrapping code we introduced in Session 5 to compute the 95% CI around each OR.
+
+```{r}
+#| eval: false
+boot <- function(data){
+  data %>% 
+    slice_sample(prop = 1, replace = TRUE)
+}
+```
+
+-   Since ORs are skewed (analogous to the F statistic), there is one additional step of taking the log of the bootstrapped ORs and then exponentiating the 2.5th and 97.5th percentiles to return the unlogged mean and 95% CI. Study the code below and then use it to calculate the 95% CI for each dataset.
+
+```{r}
+#| eval: false
+b1_boot <- map(1:10000, \(i) {
+  tibble(OR = boot(b1) %>%
+    calc_OR("iphone","android", "mac","pc")) %>% log()
+  }) %>% 
+  list_rbind() %>%
+  
+  summarize(CI_lower = exp(quantile(OR,____)),
+            mean_OR = exp(mean(OR)),
+            CI_upper = exp(quantile(OR,____)))
+
+```
+
+-   You could also deploy the built-in R function, `fisher.test()` to compute an OR with CIs on a 2x2 contingency table. The function either takes a `table()` object like the ones you created above (`fisher.test(table(b1))`) or groups and categories as separate entries (`fisher.test(b1 %>% pull(laptop),b1 %>% pull(phone))`). Try the function on each dataset and compare its OR and 95% CI with the values you bootstrapped.
+
+3.  Rather than determining a specific direction of association between two variables (e.g. how much more likely one is to own a Mac given they own an iPhone over an android), we may be interested in determining whether there is an overall association between the two variables. To do so, we may calculate the chi-square ($\chi^2$) statistic. The process of calculating it is rather elegant but would merit attention, so we'll go through it step by step. Visit [this tutorial](https://www.simplypsychology.org/chi-square.html){target="_blank"} for information on how it is calculated.
+
+-   We begin by formatting the raw `b1` tibble into a tibble showing the counts for each combination of group and category variable using `count()`. Run `?count` if you're unsure what arguments it takes:
+
+```{r}
+#| eval: false
+b_counted <- b1 %>% count(_______)
+```
+
+We will now write a function, `chi_sq()` to calculate the $\chi^2$ statistic, taking `b_counted` as its data argument. The next step is to calculate the row (group), column (category) and grand totals. These will be used to determine the counts we would expect by chance. Fill in the blanks to compute them, remembering to use the `{{ }}` embrace notation for group and category column variables:
+
+```{r}
+#| eval: false
+chi_sq <- function(data, group, category, count){
+  data %>%
+    group_by(_____) %>%
+    mutate(row_total = sum(____)) %>%
+    ungroup() %>%
+    ## Now the column total
+    group_by(_____) %>%
+    mutate(column_total = sum(____)) %>%
+    ungroup() %>%
+    # now the grand total
+    mutate(grand_total = sum(____))
+}
+```
+
+-   Once we have the row, column and grand totals, we can compute the expected counts by multiplying the row and column totals for each combination and dividing by the grand total as the tutorial highlights.
+
+```{r}
+#| eval: false
+chi_sq <- function(data, group, category, count){
+  data %>%
+    group_by(_____) %>%
+    mutate(row_total = sum(____)) %>%
+    ungroup() %>%
+    ## Now the column total
+    group_by(_____) %>%
+    mutate(column_total = sum(____)) %>%
+    ungroup() %>%
+    # now the grand total
+    mutate(grand_total = sum(_____),
+           expected = ________)
+}
+```
+
+-   The last piece to the calculation is the actual calculation of the $\chi^2$ statistic. Based on the formula introduced in the tutorial, fill in the final blank to compute $\chi^2$.
+
+```{r}
+#| eval: false
+chi_sq <- function(data, group, category, count){
+  data %>%
+    group_by(_____) %>%
+    mutate(row_total = sum(____)) %>%
+    ungroup() %>%
+    ## Now the column total
+    group_by(_____) %>%
+    mutate(column_total = sum(____)) %>%
+    ungroup() %>%
+    # now the grand total
+    mutate(grand_total = sum(____),
+           expected = ________) %>%
+    summarize(chi_sq = _____________________)
+}  
+```
+
+-   Excellent! Let's now use the function you've built up to compute the $\chi^2$ values for each dataset. We will explore methods below for computing p-values for derived $\chi^2$ values below.
+
+What if your data include more than two groups and/or categories? Much of the underlying math remains the same as in the 2×2 case, but there are some important differences particularly regarding interpretation. We will explore key considerations when working with categorical data that involve more than four group–category combinations, using the data that can be generated by the code below.
+
+```{r}
+#| eval: true
+#| warning: false
+library(tidyverse)
+
+d1_cs <- tibble(
+  group = rep(c("A", "B", "C"), c(38, 42, 40))) %>%
+  mutate(category = c(
+    rep(c("X1", "X2", "X3", "X4"), c(10, 10, 9, 9)),
+    rep(c("X1", "X2", "X3", "X4"), c(12, 10, 11, 9)),
+    rep(c("X1", "X2", "X3", "X4"), c(12, 9, 10, 9))
+  ))
+
+d2_cs <- tibble(
+  group = rep(c("A", "B", "C"), c(38, 42, 40))) %>%
+  mutate(category = c(
+    rep(c("X1", "X2", "X3", "X4"), c(7, 13, 12, 6)),
+    rep(c("X1", "X2", "X3", "X4"), c(12, 10, 11, 9)),
+    rep(c("X1", "X2", "X3", "X4"), c(15, 6, 7, 12))
+  ))
+
+d3_cs <- tibble(
+  group = rep(c("A", "B", "C"), c(38, 42, 40))) %>%
+  mutate(category = c(
+    rep(c("X1", "X2", "X3", "X4"), c(5, 15, 14, 4)),
+    rep(c("X1", "X2", "X3", "X4"), c(12, 10, 11, 9)),
+    rep(c("X1", "X2", "X3", "X4"), c(17, 4, 5, 14))
+  ))
+
+```
+
+4.  First, let's plot the these data to take a look at what the proportions of categories look like across groups. Recreate the code to produce this plot:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-width: 10
+#| fig-height: 3.7
+d1_cs %>% 
+  mutate(data = "d1_cs") %>% 
+  add_row(d2_cs %>% 
+            mutate(data = "d2_cs")) %>% 
+  add_row(d3_cs %>% 
+            mutate(data = "d3_cs")) %>% 
+  ggplot(aes(x = group, fill = category)) +
+  geom_bar(position = "fill", 
+           color = "black") +
+  scale_fill_grey() +
+  theme_linedraw(base_size = 16) +
+  labs(x = NULL,
+       y = NULL, 
+       fill = NULL) +
+  facet_wrap(~data) +
+  scale_y_continuous(labels = scales::percent)
+```
+
+-   Next, we want to investigate how the differences in proportions that can be seen in the bar chart translates into observed and expected counts. Use your newly acquired heatmapping skills to create a composite plot containing 6 heatmaps. Organize the heatmaps so the first row shows the observed counts for each dataset, and the second row the expected counts. Calculate observed and expected counts by using `count()` and a modified version of the `chi_sq()` function from before so that this function instead of outputting the chi-square statistic adds the expected counts to the input data (all you need to to is remove one line of code). Make sure your heatmaps display the count values (the numbers) using `geom_text()` and that the tile and text colors contrast enough for the counts to be easily readable. To make visual comparisons across heatmaps easier, ensure that all plots use the same color range, so that equal values correspond to the same tile color in every heatmap. This will take some work to figure out, but we are confident that you can do it. Suggestion: we made it work by collecting all b1 in one tibble, pivoting to longer format (think `cols = c(observed, expected)`) and using `facet_grid()`.
+
+-   Calculate the chi-square statistic for all three datasets. This can be done by using the `chi_sq()` function since the chi-square statistic is calculated the same way irrespective of the number of groups and categories. Explain the relationship between the chi-square statistic, observed and expected counts.
+
+5.  Much like the chi-square calculation stays the same no matter the number of groups and categories, so does the way we permute the data to calculate p-values. We will not ask you to do this "by hand" again, but instead once more point you to the [infer package](https://infer.netlify.app/articles/chi_squared){target="_blank"}. Use the methods described in the article to perform a "Test of Independence" on the `d1_cs`, `d2_cs` and `d3_cs` data.
+
+The base R function `chisq.test()` lets you perform different types of tests on categorical data. For example, to run a chi-squared test of independence on the `d1_cs` data we can use this code:
+
+```{r}
+#| eval: false
+chisq.test(d1_cs %>% pull(group), d1_cs %>% pull(category))
+```
+
+The `chisq.test()` function has an argument `simulate.p.value` and if you set it to `TRUE` it computes p-values by Monte Carlo simulation. Although this is not the default setting in `chisq.test()`, it is often recommended to use simulation (or permutation of course) when performing chi-square tests to avoid issues that can arise from small samples or sparse tables. Next, we want you to develop an understanding of how data can be simulated under the null hypothesis in this context.
+
+6.  Fill in the blanks in the code below so that it runs correctly and produces values representing a chi-square null distribution suitable for calculating p-values for the `d1_cs`, `d2_cs` and `d3_cs` datasets. Set the values in the `prob` arguments so that the probability of observing any of the categories is equal across groups, in other words the probability of observing `X1` for example should be the same in `A`, `B` and `C`. Think about (or test by running some code examples) whether the probability of observing the different categories also needs to be the same within groups. Will a single null distribution suffice for all three datasets?
+
+```{r}
+#| eval: false
+sims <- map(1:10000, \(i) tibble(
+  group = rep(c("A", "B", "C"), c(____, ____, ____))) %>%
+    mutate(category = c(
+      sample(c("X1", "X2", "X3", "X4"), 38, 
+             replace = TRUE, 
+             prob = c(____, ____, ____, ____)),
+      sample(c("X1", "X2", "X3", "X4"), ____, 
+             replace = TRUE, 
+             prob = c(____, ____, ____, ____)),
+      sample(c("X1", "X2", "X3", "X4"), ____, 
+             replace = TRUE, 
+             prob = c(____, ____, ____, ____))
+    )))
+
+css <- sims %>% 
+  map(\(i) i %>% count(_____, _____)) %>% 
+  map(\(i) i %>% _____) %>% 
+  list_rbind()
+```
+
+-   Compute the p-values and compare them to the output from the `chisq.test()` function. Read the help page to figure out how to tell the `chisq.test()` to run 10,000 replicates.
+
+7.  It’s effect size time! Odds ratios don’t really extend beyond the 2×2 case. For data with more groups and/or categories, the most common effect size reported alongside the results of a chi-square test is *Cramer’s V*. Here is a [video](https://www.youtube.com/watch?v=BROyKPwsxKs&t=2s){target="_blank"} explaining Cramer's V in less than a minute (it is quite simple to compute you see)! How does the effect size compare to what you already know about the `d1_cs`, `d2_cs` and `d3_cs` data?
+
+After finding a significant result from a chi-square test of independence, you can inspect the *standardized residuals* for each cell in the contingency table. These residuals can be viewed as a type of post-hoc test and show how much each observed cell count deviates from the expected count, in units of standard deviation:
+
+$$r_{a} = \frac{O_{a} - E_{a}}{\sqrt{E_{a}}}$$
+
+-   $r_{a}$: The standardized residual for a specific cell
+-   $O_{a}$: The observed count in that cell
+-   $E_{a}$: The expected count in that cell
+
+The way we calculated counts in previous exercises makes it straightforward to add a column with standardized residuals. All you need to do is add one more line to the final `mutate()` call in the function you wrote to output the expected counts.
+
+8.  Create heatmaps showing the standardized residuals for the data that were significant in the chi-square test. Ask the internet — or your favorite AI assistant — how to interpret the plotted values. Does the concept of multiple comparisons apply in this context?
+
+9.  Copy the code used to generate the `d2_cs` data, multiply all counts in the code by 2, and investigate how doubling the sample size affects the chi-square statistic, p-value, effect size and standardized residuals.

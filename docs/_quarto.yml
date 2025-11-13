@@ -37,6 +37,7 @@ website:
           - isr/Post_hoc2.qmd
           - isr/stats_journal_club.qmd
           - isr/RM-ANOVA.qmd
+          - isr/chisq.qmd
           
           
       # - section: Exercises and Grading
