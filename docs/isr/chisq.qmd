@@ -1,12 +1,12 @@
 ---
-title: "Session 12:  tests, odds ratios & Cramer's V"
+title: "Session 12: chi-square tests, odds ratios & Cramer's V"
 format: html
 ---
 
 While we have previously been exploring numerical data types, we now turn to a fairly typical scenario of having count data.\
-1. To understand the logic behind the chi-squared test, we begin by considering a 2x2 contingency table. You will have encountered these previously in validations of a particular diagnostic test, including EarliPoint, where our interest lies in comparing the performance of some test against some ground truth value set. In the context of EarliPoint diagnostic prediction, we have two variables (EarliPoint-predicted diagnostic label and clinician-assessed diagnostic label) with two levels (autism predicted/not predicted for EarliPoint and child diagnosed/not diagnosed with autism by an expert clinician), thereby yielding four possible combinations. Review the table below and think about where the four possible scenarios would be placed:
+To understand the logic behind the chi-squared test, we begin by considering a 2x2 contingency table. You will have encountered these previously in validations of a particular diagnostic test, including EarliPoint, where our interest lies in comparing the performance of some test against some ground truth value set. In the context of EarliPoint diagnostic prediction, we have two variables (EarliPoint-predicted diagnostic label and clinician-assessed diagnostic label) with two levels (autism predicted/not predicted for EarliPoint and child diagnosed/not diagnosed with autism by an expert clinician), thereby yielding four possible combinations. Review the table below and think about where the four possible scenarios would be placed:
 
-![](images/clipboard-3150409334.png){width="529"}
+![](images/cont_table.png){width="487"}
 
 These contingency tables allow us to represent the relationship between two variables in terms of how the frequencies of observations are separated across different categories.
 
