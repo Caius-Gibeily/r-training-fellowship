@@ -38,6 +38,7 @@ website:
           - isr/stats_journal_club.qmd
           - isr/RM-ANOVA.qmd
           - isr/chisq.qmd
+          - isr/Linear_regression.qmd
           
           
       # - section: Exercises and Grading
