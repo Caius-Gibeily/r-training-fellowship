@@ -1,0 +1,72 @@
+---
+title: "Session 14: p-hacking strategies & how to avoid them"
+format: html
+editor: visual
+---
+
+## Reading Assignment
+
+Please read the following paper:
+
+-   **Big Little Lies: A Compendium and Simulation of P-Hacking Strategies**\
+    [Link to Paper](https://royalsocietypublishing.org/rsos/article/10/2/220346/92017/Big-little-lies-a-compendium-and-simulation-of-p){target="_blank"}
+
+We will be focusing on understanding the different p-hacking strategies outlined in the *Compendium of P-Hacking Strategies*. This will be the foundation for your group work.
+
+
+## Group Assignment
+
+Please divide yourselves into **two groups**, each tasked with tackling a specific section from the *Compendium of P-Hacking Strategies*. Each group will use the [Shiny app](https://shiny.psy.lmu.de/felix/ShinyPHack/){target="_blank"} to simulate and explore the effects of their assigned strategies.
+
+### Group 1: p-hacking Strategies 1-6
+
+-   **Strategies to explore**:
+    -   3.1 Selective reporting of the dependent variable
+    -   3.2 Selective reporting of the independent variable
+    -   3.3 Optional stopping
+    -   3.4 Outlier exclusion
+    -   3.5 Controlling for covariates
+    -   3.6 Scale redefinition
+
+### Group 2: p-hacking Strategies 6-12
+
+-   **Strategies to explore**:
+    -   3.7 Variable transformation
+    -   3.8 Discretizing variables
+    -   3.9 Exploiting alternative hypothesis tests
+    -   3.10 Favourable imputation
+    -   3.11 Subgroup analyses
+    -   3.12 Incorrect rounding
+
+
+## Shiny App Simulation
+
+Each group will use the Shiny app to simulate their assigned p-hacking strategies. As you interact with the app, try to observe the following:
+
+1.  How does each p-hacking strategy affect the type I error rates and reported statistical significance?
+2.  Why might applying this strategy lead to an inflated error rate?
+2.  Try imagining a scenario or recalling a time when you might have found yourself working with a similar dataset. How would you ensure you avoid unintentionally p-hacking?
+
+Depending on the p-hacking strategy, some parameters you may want to explore are
+-   Number of observations
+-   Number of (in)dependent variables
+-   Correlation among variables
+-   Outlier exclusion methods
+-   p-value selection method
+-   Imputation method
+
+
+Please experiment with different inputs and configurations in the Shiny app to fully explore how each strategy works. Export the distribution in p-hacked and original effect sizes, as well as the summary original and hacked false positive rate. Feel free to use tables or R plots to visualize how the false-positive rate varies under different parameter conditions.
+
+## Group Presentation
+
+After completing the simulation, each group will prepare a short presentation (~20 minutes) discussing the following:
+
+1.  A summary of the p-hacking strategies you explored.
+2.  How each strategy manipulates data or statistical analysis.
+3.  The potential implications of these strategies on scientific research.
+4.  Screenshots or key outputs from the Shiny app illustrating your findings.
+
+## Delivery
+
+Please be ready to deliver your presentation during class next week summarizing your group's findings

@@ -39,7 +39,7 @@ website:
           - isr/RM-ANOVA.qmd
           - isr/chisq.qmd
           - isr/Linear_regression.qmd
-          
+          - isr/p_hacking.qmd
           
       # - section: Exercises and Grading
       #   contents:
