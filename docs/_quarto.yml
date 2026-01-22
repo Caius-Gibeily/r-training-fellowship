@@ -41,6 +41,7 @@ website:
           - isr/Linear_regression.qmd
           - isr/p_hacking.qmd
           - isr/logistic_regression.qmd
+          - isr/gams.qmd
           
       # - section: Exercises and Grading
       #   contents:
