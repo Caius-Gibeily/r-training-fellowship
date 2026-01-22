@@ -51,7 +51,7 @@ poly_data  <- function(data, x,degree,coefs = NULL,noise_sd = 10) {
 2.  Then answer the following questions:
 -   How does the fitted curve behave near the boundaries of the data as k increases?
 -   At what point does the fitted function begin to show implausible oscillations?
--   Why might very high-order polynomials fit the observed data extremely well yet generalize poorly? (Check out this Starmer video on the [bias-variance tradeoff](https://www.youtube.com/watch?v=EuBBz3bI-aA){target="_blank"}) if interested!). 
+-   Why might very high-order polynomials fit the observed data extremely well yet generalize poorly? (Check out this Starmer video on the [bias-variance tradeoff](https://www.youtube.com/watch?v=EuBBz3bI-aA){target="_blank"} if interested!). 
 
 ## Splines and basis functions
 
@@ -66,16 +66,17 @@ poly_data  <- function(data, x,degree,coefs = NULL,noise_sd = 10) {
 ## Generalized Additive Models (GAMs)
 
 5.    Once you feel reasonably confident in your understanding of the material above, it's time to get steeped back into implementation in R, using [Noam Ross' tutorial](https://noamross.github.io/gams-in-r-course/){target="_blank"}. The code blocks can be slow to run, so please just be patient and know it's not an error with your system if it takes a while! Since the tutorials are quite extensive, we would recommend tackling the following section first:
-    -   *1 - Introduction to Generalized Additive Models*, sections 1-8
+
+-   *1 - Introduction to Generalized Additive Models*, sections 1-8
 
 ## Applying GAMs
 6.    In session 13, you investigated the relationship between bill depth and length in Chinstrap penguins by fitting a linear model. Using what you've learned, use the `mgcv` package to model bill depth as a function of bill length using a GAM. Using the REML method, what smoothness ($\lambda$) parameter was converged upon? What were the effective degrees of freedom (edf) and p-value of the smooth terms? (You can read more about interpreting the summary by typing `help(summary.gam)` into the console)
-    -    Try using the [gratia](https://cran.r-project.org/web/packages/gratia/vignettes/gratia.html){target="_blank"} package to visualize the model, drawing upon the `gratia::draw` function.
-    -    You can also visualize model diagnostics using the `appraise()` function within gratia. Try passing your model through it and evaluating the output. You might have seen similar plots in previous work when evaluating a linear model. 
+-    Try using the [gratia](https://cran.r-project.org/web/packages/gratia/vignettes/gratia.html){target="_blank"} package to visualize the model, drawing upon the `gratia::draw` function.
+-    You can also visualize model diagnostics using the `appraise()` function within gratia. Try passing your model through it and evaluating the output. You might have seen similar plots in previous work when evaluating a linear model. 
 
 ## Logistic GAMs
 7.    Then go onto this section on fitting logistic GAMs:
-    -   *4 - Logistic GAMs for Classification*, sections 1-9
+-   *4 - Logistic GAMs for Classification*, sections 1-9
 
 8.    Last week we explored classical logistic regression in which our dependent variable was binary. By transforming the data via the logit function from the probability to log-odds scale, we then saw how we modelled the data linearly. If the change in the log-odds of an outcome in y does not scale linearly with x, classical logistic regression may not effectively capture this relationship. We can instead use logistic GAMs. Let's use an example from last week. Below you'll find the heatmap for example E. What shape did you predict the regression would take last week? Does the shape of the function will with a GAM now align more with your prediction? 
 
@@ -107,9 +108,9 @@ tibble(x = seq(0, 1, length.out = 20),
         legend.position = "none")  
 ```
 
-  -   Use the data you created last week from this heatmap to fit a logistic GAM by setting the family to `binomial`. 
-  -   Try replacing a few of the 0s to 1s and 1s to 0s in your y variable. How and why do the shape of the probability curve and standard errors change? 
+-   Use the data you created last week from this heatmap to fit a logistic GAM by setting the family to `binomial`. 
+-   Try replacing a few of the 0s to 1s and 1s to 0s in your y variable. How and why do the shape of the probability curve and standard errors change? 
 
 9.    Finally, using the same continuous morphological measurement as a predictor for a binary outcome as you used last week, fit a logistic GAM. 
-  -   Visualize the probability curve (ensure the plot isn't rendered on the log-odds scale). 
-  -  Using your fitted logistic GAM, use `mgcv::predict` to estimate outcome probabilities (with 95% confidence intervals) at the 25th, 50th, and 75th percentiles of your morphological predictor in the penguins dataset (hint: use the `newdata` argument to specify new observations you'd like to predict probabilities for). How do these predicted probabilities compare with the predictions from your classical logistic regression model?
+-   Visualize the probability curve (ensure the plot isn't rendered on the log-odds scale). 
+-  Using your fitted logistic GAM, use `mgcv::predict` to estimate outcome probabilities (with 95% confidence intervals) at the 25th, 50th, and 75th percentiles of your morphological predictor in the penguins dataset (hint: use the `newdata` argument to specify new observations you'd like to predict probabilities for). How do these predicted probabilities compare with the predictions from your classical logistic regression model?
