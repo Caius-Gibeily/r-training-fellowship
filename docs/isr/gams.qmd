@@ -1,5 +1,5 @@
 ---
-title: "Session 16: Nonlinear regression"
+title: "Session 16: Nonlinear Regression"
 format: html
 editor: visual
 ---
@@ -11,7 +11,7 @@ This session will explore nonlinear regression, beginning with polynomial regres
 
 -   Use the function below to generate a synthetic dataset of degree 3 (cubic) by piping `dat` through the `poly_data` function (`dat %>% poly_data(...)`). Try setting some ran
 ```{r}
-
+#| eval: false
 library(tidyverse)
 
 dat <- tibble(x = -10:20)
