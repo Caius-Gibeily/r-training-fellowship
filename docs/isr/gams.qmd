@@ -78,7 +78,7 @@ poly_data  <- function(data, x,degree,coefs = NULL,noise_sd = 10) {
 7.    Then go onto this section on fitting logistic GAMs:
 -   *4 - Logistic GAMs for Classification*, sections 1-9
 
-8.    Last week we explored classical logistic regression in which our dependent variable was binary. By transforming the data via the logit function from the probability to log-odds scale, we then saw how we modelled the data linearly. If the change in the log-odds of an outcome in y does not scale linearly with x, classical logistic regression may not effectively capture this relationship. We can instead use logistic GAMs. Let's use an example from last week. Below you'll find the heatmap for example E. What shape did you predict the regression would take last week? Does the shape of the function will with a GAM now align more with your prediction? 
+8.    Last week we explored classical logistic regression in which our dependent variable was binary. By transforming the data via the logit function from the probability to log-odds scale, we then saw how we modelled the data linearly. If the change in the log-odds of an outcome in y does not scale linearly with x, classical logistic regression may not effectively capture this relationship. We can instead use logistic GAMs. Let's use an example from last week. Below you'll find the heatmap for example E. What shape did you predict the regression would take last week? Does the shape of the function take after fitting a GAM align better with your prediction last week? 
 
 ```{r}
 #| eval: true
