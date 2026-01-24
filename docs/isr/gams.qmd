@@ -9,7 +9,7 @@ This session will explore nonlinear regression, beginning with polynomial regres
 ## Polynomial regression 
 1.    Please check out the first 7 minutes of Mike Cohen's [Polynomial Regression](https://www.youtube.com/watch?v=QptI-vDle8Y){target="_blank"} (though feel free to watch the last part of BIC model selection!)
 
--   Use the function below to generate a synthetic dataset of degree 3 (cubic) by piping `dat` through the `poly_data` function (`dat %>% poly_data(...)`). Try setting some ran
+-   Use the function below to generate a synthetic dataset of degree 3 (cubic) by piping `dat` through the `poly_data` function (`dat %>% poly_data(...)`). 
 ```{r}
 #| eval: true
 #| message: false
