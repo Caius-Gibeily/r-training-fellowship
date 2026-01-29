@@ -42,6 +42,7 @@ website:
           - isr/p_hacking.qmd
           - isr/logistic_regression.qmd
           - isr/gams.qmd
+          - isr/FDA.qmd
           
       # - section: Exercises and Grading
       #   contents:
