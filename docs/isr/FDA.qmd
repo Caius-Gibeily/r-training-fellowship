@@ -1,5 +1,5 @@
 ---
-title: "Intro to Functional Data Analysis (FDA)"
+title: "Session 17: Intro to Functional Data Analysis (FDA)"
 format: html
 ---
 
@@ -25,6 +25,7 @@ fda_data %>%
     button_label = "Download data as csv",
     button_type = "default",
     has_icon = TRUE,
+    csv2 = FALSE,
     icon = "fa fa-save"
   )
 ```
